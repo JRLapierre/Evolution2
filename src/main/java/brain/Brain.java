@@ -58,7 +58,7 @@ public abstract class Brain {
 		case (1):
 			return new FlexibleBrain(bb);
 		case (2):
-			return null;
+			return new LayeredBrain(bb);
 		default:
 			System.err.println("error while recuperating the datas : the type " + type 
 					+ " is unrecognized");
@@ -76,6 +76,8 @@ public abstract class Brain {
 	public Brain duplicate() {
 		if (this instanceof FlexibleBrain flexibleBrain)
 			return new FlexibleBrain(flexibleBrain);
+		if (this instanceof LayeredBrain layeredBrain)
+			return new LayeredBrain(layeredBrain);
 		return null;
 	}
 	
