@@ -1,6 +1,9 @@
 package brain;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+
+import brain.mutation.MutationLinkFactor;
 
 /**
  * This class represents a brain organized in layers.<br>
@@ -129,6 +132,17 @@ public class LayeredBrain extends Brain {
 	/*                       controlled mutation functions                             */
 	/***********************************************************************************/
 	
+	/**
+	 * function that allows to change the factor of a link between two nodes.
+	 * @param newFactor the new factor of the link
+	 * @param layer the layer of the origin node of the link
+	 * @param origin the position of the origin node of the link
+	 * @param target the position of the target node of the link
+	 */
+	void changeLinkFactor(float newFactor, short layer, short origin, short target) {
+		this.links[layer][origin][target] = newFactor;
+	}
+	
 	/***********************************************************************************/
 	/*                              mutations                                          */
 	/***********************************************************************************/
@@ -137,13 +151,22 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public void changeRandomLinkFactor(float minMaxChange) {
-		// TODO Auto-generated method stub
+		short layer = (short) random.nextInt(this.links.length);
+		short origin = (short) random.nextInt(this.links[layer].length);
+		short target = (short) random.nextInt(this.links[layer][origin].length);
+		float changement = this.links[layer][origin][target]
+				+ random.nextFloat(-minMaxChange, minMaxChange);
+		//registration
+		this.mutations.add(new MutationLinkFactor(layer, origin, (short) (layer + 1), target, 
+				this.links[layer][origin][target], changement));
+		//mutation
+		this.changeLinkFactor(this.links[layer][origin][target] + changement, layer, origin, target);
 		
 	}
 
 	@Override
 	public void changeRandomLinkExtremity() {
-		// TODO Auto-generated method stub
+		// impossible operation
 		
 	}
 	
@@ -157,8 +180,7 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public void addRandomLink(float minMaxFactor) {
-		// TODO Auto-generated method stub
-		
+		// impossible operation
 	}
 
 	//deletions mutations --------------------------------------------------------------
@@ -171,8 +193,7 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public void deleteRandomLink() {
-		// TODO Auto-generated method stub
-		
+		// impossible operation
 	}
 	
 	/***********************************************************************************/
@@ -181,8 +202,28 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public float[] compute(float[] inputs) {
-		// TODO Auto-generated method stub
-		return null;
+		//getting the inputs
+		this.nodes[0] = Arrays.copyOf(inputs, inputs.length);
+		//transmitting in the layers
+		for (int i = 0; i < this.links.length; i++) { //for each layer
+			//transmitting the signals to the other layers
+			for (int j = 0; j < this.links[i].length; j++) {//for each source node
+				for (int k = 0; k < this.links[i][j].length; k++) {//for each target node
+					//take the value from the source and transmitting it to the target
+					this.nodes[i+1][k] += this.nodes[i][j] * this.links[i][j][k];
+				}
+			}
+		}
+		//copiing the results
+		float[] results = Arrays.copyOf(this.nodes[this.nodes.length - 1], 
+				this.nodes[this.nodes.length - 1].length);
+		//resetting the nodes
+		for (int i = 0; i < this.nodes.length; i++) {
+			for (int j = 0; j < this.nodes[i].length; j++) {
+				this.nodes[i][j] = 0;
+			}
+		}
+		return results;
 	}
 
 	@Override
