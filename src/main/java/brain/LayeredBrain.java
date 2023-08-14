@@ -33,6 +33,13 @@ public class LayeredBrain extends Brain {
 	 */
 	private static float defaultLinkValue = 0;
 	
+	/**
+	 * When new links will be created, the value of the link will vary depending of this
+	 * parameter. <br>
+	 * The value cannot be negative.
+	 */
+	private static float defaultLinkVariation = 0;
+	
 	/***********************************************************************************/
 	/*                              static functions                                   */
 	/***********************************************************************************/
@@ -44,6 +51,15 @@ public class LayeredBrain extends Brain {
 	 */
 	public static void setDefaultLinkValue(float value) {
 		defaultLinkValue = value;
+	}
+	
+	/**
+	 * This function allows us to change the default value of the variation of the default 
+	 * value of the links. <br>
+	 * @param value the new default link variation
+	 */
+	public static void setDefaultLinkVariation(float value) {
+		defaultLinkVariation = (value > 0) ? value : -value;
 	}
 	
 	/***********************************************************************************/
@@ -59,7 +75,8 @@ public class LayeredBrain extends Brain {
 		int size = this.nodes[originLayer + 1].length;
 		float[] array = new float[size];
 		for (int i = 0; i < size; i++) {
-			array[i] = defaultLinkValue;
+			array[i] = defaultLinkValue + ((defaultLinkVariation != 0) ? 
+					random.nextFloat(-defaultLinkVariation, defaultLinkVariation) : 0);
 		}
 		return array;
 	}
