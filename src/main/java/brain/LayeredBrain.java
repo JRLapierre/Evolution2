@@ -21,20 +21,83 @@ public class LayeredBrain extends Brain {
 	/**
 	 * array containing the values for each node
 	 */
-	private float[][] nodeValues;
+	private float[][] nodes;
 	
 	/**
 	 * array containing the value of the links between the nodes
 	 */
 	private float[][][] links;
 	
+	/**
+	 * At the initialisation of the brain, the links will take this value.
+	 */
+	private static float defaultLinkValue = 0;
+	
+	/***********************************************************************************/
+	/*                              static functions                                   */
+	/***********************************************************************************/
+	
+	/**
+	 * This function allows us to change the default value of the links between the nodes.
+	 * By default, the value is set to 0.
+	 * @param value the new default value of the links.
+	 */
+	public static void setDefaultLinkValue(float value) {
+		defaultLinkValue = value;
+	}
+	
+	/***********************************************************************************/
+	/*                       useful class-specific functions                           */
+	/***********************************************************************************/
+	
+	/**
+	 * function that creates a new array of links from a node to the next layer.
+	 * @param originLayer the layer of the origin node
+	 * @return the array of links
+	 */
+	private float[] createLinks(int originLayer) {
+		int size = this.nodes[originLayer + 1].length;
+		float[] array = new float[size];
+		for (int i = 0; i < size; i++) {
+			array[i] = defaultLinkValue;
+		}
+		return array;
+	}
+	
 	/***********************************************************************************/
 	/*                               constructors                                      */
 	/***********************************************************************************/
 	
+	/**
+	 * Constructor for a new LayeredBrain. <br>
+	 * The values of the links will be set do defaultLinkValue.
+	 * @param numberInputs The number of inputs nodes
+	 * @param numberOutputs the number of output nodes
+	 * @param numberHiddenLayers the number of hidden layers between the inputs an the 
+	 * outputs nodes
+	 * @param numberByLayer the number of hidden nodes by hidden layer
+	 */
 	public LayeredBrain(short numberInputs, short numberOutputs, 
 			short numberHiddenLayers, short numberByLayer) {
-		//TODO
+		this.nodes = new float[2 + numberHiddenLayers][];
+		this.links = new float[1 + numberHiddenLayers][][];//nothing coming from the outputs
+		//input array
+		this.nodes[0] = new float[numberInputs];
+		this.links[0] = new float[numberInputs][];
+		//hidden layers
+		for (int i = 1; i < numberHiddenLayers + 1; i++) {
+			this.nodes[i] = new float[numberByLayer];
+			this.links[i] = new float[numberByLayer][];
+		}
+		//output layer
+		this.nodes[2 + numberHiddenLayers] = new float[numberOutputs];		
+		//connecting the layers
+		for (int i = 0; i < this.links.length; i++) {
+			for (int j = 0; j < this.links[i].length; i++) {
+				this.links[i][j] = createLinks(i);
+			}
+		}
+		
 	}
 	
 	protected LayeredBrain(ByteBuffer bb) {
