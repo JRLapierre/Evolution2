@@ -3,6 +3,7 @@ package brain;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import brain.mutation.MutationAdditionNode;
 import brain.mutation.MutationLinkFactor;
 
 /**
@@ -140,7 +141,38 @@ public class LayeredBrain extends Brain {
 	 * @param target the position of the target node of the link
 	 */
 	void changeLinkFactor(float newFactor, int layer, int origin, int target) {
+		//registration
+		if (traceMutation) this.mutations.add(new MutationLinkFactor(
+				(short) layer, 
+				(short) origin, 
+				(short) (layer + 1), 
+				(short) target, 
+				this.links[layer][origin][target], 
+				newFactor - this.links[layer][origin][target]));
+		//mutation
 		this.links[layer][origin][target] = newFactor;
+	}
+	
+	void addNode(int layer) {
+		if (layer <= 0 || layer >= this.nodes.length - 1) return;
+		//add the new node
+		this.nodes[layer] = Arrays.copyOf(this.nodes[layer], this.nodes[layer].length + 1);
+		//add the new links from the new node
+		this.links[layer] = Arrays.copyOf(this.links[layer], this.links[layer].length + 1);
+		this.links[layer][this.links[layer].length -1] = createLinks(layer);
+		//add one link for each node of the previous layer
+		for (int i = 0; i < this.links[layer-1].length; i++) {
+			this.links[layer-1][i] = Arrays.copyOf(
+					this.links[layer-1][i], this.links[layer-1][i].length + 1);
+			this.links[layer-1][i][this.links[layer-1][i].length-1] = 
+					defaultLinkValue + ((defaultLinkVariation != 0) ? 
+							random.nextFloat(-defaultLinkVariation, defaultLinkVariation) : 0);
+		}
+		//registration
+		if (traceMutation) {
+			this.mutations.add(new MutationAdditionNode(layer));
+		}
+		
 	}
 	
 	/***********************************************************************************/
@@ -154,11 +186,7 @@ public class LayeredBrain extends Brain {
 		short layer = (short) random.nextInt(this.links.length);
 		short origin = (short) random.nextInt(this.links[layer].length);
 		short target = (short) random.nextInt(this.links[layer][origin].length);
-		float changement = this.links[layer][origin][target]
-				+ random.nextFloat(-minMaxChange, minMaxChange);
-		//registration
-		if (traceMutation) this.mutations.add(new MutationLinkFactor(layer, origin, 
-				(short) (layer + 1), target, this.links[layer][origin][target], changement));
+		float changement = random.nextFloat(-minMaxChange, minMaxChange);
 		//mutation
 		this.changeLinkFactor(this.links[layer][origin][target] + changement, 
 				layer, origin, target);
@@ -175,8 +203,7 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public void addRandomNode() {
-		// TODO Auto-generated method stub
-		
+		this.addNode(random.nextInt(1, this.links.length));
 	}
 
 	@Override

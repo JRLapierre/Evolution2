@@ -280,8 +280,25 @@ class TestBrain {
 		assertEquals(1, ((MutationLinkFactor) b2.mutations.get(0)).getTargetArray());
 		assertEquals(0, ((MutationLinkFactor) b2.mutations.get(0)).getTargetPosition());
 		assertEquals(1, ((MutationLinkFactor) b2.mutations.get(0)).getOldFactor());
-		assertEquals(outputs[0] - ((MutationLinkFactor) b2.mutations.get(0)).getOldFactor(),
-				((MutationLinkFactor) b2.mutations.get(0)).getChangement());
+		assertEquals(outputs[0] - 1, ((MutationLinkFactor) b2.mutations.get(0)).getChangement());
+	}
+	
+	@Test
+	void LayeredBrainAdditionNode() {
+		Brain.setTraceMutation(true);
+		LayeredBrain.setDefaultLinkValue(1);
+		LayeredBrain.setDefaultLinkVariation(0);
+		LayeredBrain b = new LayeredBrain(1, 1, 1, 0);
+		float[] inputs = new float[] {1};
+		float[] outputs = b.compute(inputs);
+		assertEquals(0, outputs[0]);
+		b.addRandomNode();
+		outputs = b.compute(inputs);
+		assertEquals(1, outputs[0]);
+		
+		assertTrue(b.mutations.get(0) instanceof MutationAdditionNode);
+		assertEquals(1, ((MutationAdditionNode) b.mutations.get(0)).getLayer());
+
 	}
 
 }
