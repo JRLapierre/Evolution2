@@ -97,8 +97,8 @@ public class LayeredBrain extends Brain {
 	 * outputs nodes
 	 * @param numberByLayer the number of hidden nodes by hidden layer
 	 */
-	public LayeredBrain(short numberInputs, short numberOutputs, 
-			short numberHiddenLayers, short numberByLayer) {
+	public LayeredBrain(int numberInputs, int numberOutputs, 
+			int numberHiddenLayers, int numberByLayer) {
 		this.nodes = new float[2 + numberHiddenLayers][];
 		this.links = new float[1 + numberHiddenLayers][][];//nothing coming from the outputs
 		//input array
@@ -110,10 +110,10 @@ public class LayeredBrain extends Brain {
 			this.links[i] = new float[numberByLayer][];
 		}
 		//output layer
-		this.nodes[2 + numberHiddenLayers] = new float[numberOutputs];		
+		this.nodes[1 + numberHiddenLayers] = new float[numberOutputs];		
 		//connecting the layers
 		for (int i = 0; i < this.links.length; i++) {
-			for (int j = 0; j < this.links[i].length; i++) {
+			for (int j = 0; j < this.links[i].length; j++) {
 				this.links[i][j] = createLinks(i);
 			}
 		}
@@ -139,7 +139,7 @@ public class LayeredBrain extends Brain {
 	 * @param origin the position of the origin node of the link
 	 * @param target the position of the target node of the link
 	 */
-	void changeLinkFactor(float newFactor, short layer, short origin, short target) {
+	void changeLinkFactor(float newFactor, int layer, int origin, int target) {
 		this.links[layer][origin][target] = newFactor;
 	}
 	
@@ -157,10 +157,11 @@ public class LayeredBrain extends Brain {
 		float changement = this.links[layer][origin][target]
 				+ random.nextFloat(-minMaxChange, minMaxChange);
 		//registration
-		this.mutations.add(new MutationLinkFactor(layer, origin, (short) (layer + 1), target, 
-				this.links[layer][origin][target], changement));
+		if (traceMutation) this.mutations.add(new MutationLinkFactor(layer, origin, 
+				(short) (layer + 1), target, this.links[layer][origin][target], changement));
 		//mutation
-		this.changeLinkFactor(this.links[layer][origin][target] + changement, layer, origin, target);
+		this.changeLinkFactor(this.links[layer][origin][target] + changement, 
+				layer, origin, target);
 		
 	}
 
