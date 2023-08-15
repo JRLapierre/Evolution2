@@ -332,5 +332,23 @@ class TestBrain {
 		float[] outputsCopy = copy.compute(inputs);
 		assertEquals(outputsOriginal[0], outputsCopy[0]);
 	}
+	
+	@Test
+	void testLayeredBrainToByte() {
+		LayeredBrain.setDefaultLinkValue(0.7f);
+		LayeredBrain.setDefaultLinkVariation(0.3f);
+		LayeredBrain original = new LayeredBrain(1, 1, 2, 3);
+		original.addRandomNode();
+		original.deleteRandomNode();
+		original.changeRandomLinkFactor(0.5f);
+		original.changeRandomLinkFactor(0.5f);
+		byte[] array = original.toBytes();
+		ByteBuffer bb = ByteBuffer.wrap(array);
+		Brain copy = Brain.restore(bb);
+		float[] inputs = new float[] {1};
+		float[] outputsOriginal = original.compute(inputs);
+		float[] outputsCopy = copy.compute(inputs);
+		assertEquals(outputsOriginal[0], outputsCopy[0]);
+	}
 
 }

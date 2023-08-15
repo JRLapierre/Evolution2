@@ -137,8 +137,34 @@ public class LayeredBrain extends Brain {
 		
 	}
 	
+	/**
+	 * constructor to recreate a LayeredBrain from a save.
+	 * @param bb the ByteBuffer containing the informations
+	 */
 	protected LayeredBrain(ByteBuffer bb) {
-		//TODO
+		//nb of layers
+		short nbLayers = bb.getShort();
+		this.nodes = new float[nbLayers][];
+		this.links = new float[nbLayers-1][][];
+		//nb of nodes in each layer
+		short nbNodes;
+		for (int i = 0; i < nbLayers-1; i++) {
+			nbNodes = bb.getShort();
+			this.nodes[i] = new float[nbNodes];
+			this.links[i] = new float[nbNodes][];
+		}
+		nbNodes = bb.getShort();
+		this.nodes[nbLayers-1] = new float[nbNodes];
+		//inserting the links
+		for (int i = 0; i < nbLayers-1; i++) {//layer
+			for (int j = 0; j < this.nodes[i].length; j++) {//origin node
+				this.links[i][j] = new float[this.nodes[i+1].length];
+				for (int k = 0; k < this.nodes[i+1].length; k++) {
+					this.links[i][j][k] = bb.getFloat();
+				}
+			}
+		}
+		
 	}
 	
 	/**
@@ -318,9 +344,30 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public byte[] toBytes() {
-		// TODO Auto-generated method stub
-		
-		return null;
+		//calcul of the size
+		int nbLinks = 0;
+		for (int i = 0; i < this.links.length; i++) {
+			nbLinks += this.nodes[i].length * this.nodes[i+1].length;
+		}
+		int size = 3 + this.nodes.length*2 + nbLinks*4;
+		ByteBuffer bb = ByteBuffer.allocate(size);
+		//type of the brain (2 for LayeredBrain)(1 byte)
+		bb.put((byte) 2);
+		//number of layers (short)
+		bb.putShort((short) this.nodes.length);
+		//length of each layer (a short each)
+		for (int i = 0; i < this.nodes.length; i++) {
+			bb.putShort((short) this.nodes[i].length);
+		}
+		//links (a float each)
+		for (int i = 0; i < this.links.length; i++) {
+			for (int j = 0; j < this.links[i].length; j++) {
+				for (int k = 0; k < this.links[i][j].length; k++) {
+			        bb.putFloat(this.links[i][j][k]);
+				}
+			}
+		}
+		return bb.array();
 	}
 
 }
