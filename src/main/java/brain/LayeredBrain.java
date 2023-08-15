@@ -141,8 +141,29 @@ public class LayeredBrain extends Brain {
 		//TODO
 	}
 	
+	/**
+	 * constructor to create a copy of a LayeredBrain
+	 * @param original the brain we want to copy
+	 */
 	protected LayeredBrain(LayeredBrain original) {
-		//TODO
+		this.nodes = new float[original.nodes.length][];
+		this.links = new float[original.links.length][][];
+		//nodes arrays
+		for (int i = 0; i < this.nodes.length; i++) {
+			this.nodes[i] = new float[original.nodes[i].length];
+		}
+		//links arrays
+		for (int i = 0; i < this.links.length; i++) {
+			this.links[i] = new float[original.links[i].length][];
+			for (int j = 0; j < this.links[i].length; j++) {
+				this.links[i][j] = new float[original.links[i][j].length];
+				//copy of the values
+				for (int k = 0; k < this.links[i][j].length; k++) {
+			        System.arraycopy(original.links[i][j], 0, 
+			        		this.links[i][j], 0, original.links[i][j].length);
+				}
+			}
+		}
 	}
 	
 	/***********************************************************************************/

@@ -316,5 +316,21 @@ class TestBrain {
 		
 		assertTrue(b.mutations.get(0) instanceof MutationDeletionNode);
 	}
+	
+	@Test
+	void testLayeredBrainCopy() {
+		LayeredBrain.setDefaultLinkValue(0.7f);
+		LayeredBrain.setDefaultLinkVariation(0.3f);
+		LayeredBrain original = new LayeredBrain(1, 1, 2, 3);
+		original.addRandomNode();
+		original.deleteRandomNode();
+		original.changeRandomLinkFactor(0.5f);
+		original.changeRandomLinkFactor(0.5f);
+		Brain copy = original.duplicate();
+		float[] inputs = new float[] {1};
+		float[] outputsOriginal = original.compute(inputs);
+		float[] outputsCopy = copy.compute(inputs);
+		assertEquals(outputsOriginal[0], outputsCopy[0]);
+	}
 
 }
