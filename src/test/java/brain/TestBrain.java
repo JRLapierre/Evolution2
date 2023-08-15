@@ -284,7 +284,7 @@ class TestBrain {
 	}
 	
 	@Test
-	void LayeredBrainAdditionNode() {
+	void testLayeredBrainAdditionNode() {
 		Brain.setTraceMutation(true);
 		LayeredBrain.setDefaultLinkValue(1);
 		LayeredBrain.setDefaultLinkVariation(0);
@@ -299,6 +299,22 @@ class TestBrain {
 		assertTrue(b.mutations.get(0) instanceof MutationAdditionNode);
 		assertEquals(1, ((MutationAdditionNode) b.mutations.get(0)).getLayer());
 
+	}
+	
+	@Test
+	void testLayeredBrainDeletionNode() {
+		Brain.setTraceMutation(true);
+		LayeredBrain.setDefaultLinkValue(1);
+		LayeredBrain.setDefaultLinkVariation(0);
+		LayeredBrain b = new LayeredBrain(1, 1, 2, 2);
+		float[] inputs = new float[] {1};
+		float[] outputs = b.compute(inputs);
+		assertEquals(4, outputs[0]);
+		b.deleteRandomNode();
+		outputs = b.compute(inputs);
+		assertEquals(2, outputs[0]);
+		
+		assertTrue(b.mutations.get(0) instanceof MutationDeletionNode);
 	}
 
 }

@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import brain.mutation.MutationAdditionNode;
+import brain.mutation.MutationDeletionNode;
 import brain.mutation.MutationLinkFactor;
 
 /**
@@ -85,6 +86,21 @@ public class LayeredBrain extends Brain {
 		return array;
 	}
 	
+	/**
+	 * fuction that allows to delete an element from an array knowing the index
+	 * @param array the array to modify
+	 * @param position the position of the element
+	 * @return the array without the delete element
+	 */
+	private float[] deleteFromArray(float[] array, int position) {
+		float[] newArray = new float[array.length - 1];
+		int j = 0;
+		for (int i = 0; i < array.length; i++) {
+		    if (i != position) newArray[j++] = array[i];
+		}
+		return newArray;
+	}
+	
 	/***********************************************************************************/
 	/*                               constructors                                      */
 	/***********************************************************************************/
@@ -153,6 +169,10 @@ public class LayeredBrain extends Brain {
 		this.links[layer][origin][target] = newFactor;
 	}
 	
+	/**
+	 * fuction that allows to add a hidden node.
+	 * @param layer the hidden layer where we add the node
+	 */
 	void addNode(int layer) {
 		if (layer <= 0 || layer >= this.nodes.length - 1) return;
 		//add the new node
@@ -169,10 +189,30 @@ public class LayeredBrain extends Brain {
 							random.nextFloat(-defaultLinkVariation, defaultLinkVariation) : 0);
 		}
 		//registration
-		if (traceMutation) {
-			this.mutations.add(new MutationAdditionNode(layer));
+		if (traceMutation) this.mutations.add(new MutationAdditionNode(layer));
+	}
+	
+	/**
+	 * function that allows to delete a hidden node
+	 * @param layer the layer of the node
+	 * @param position the position of the node in the layer
+	 */
+	void deleteNode(int layer, int position) {
+		//delete in the node array
+		this.nodes[layer] = new float[this.nodes[layer].length -1 ];
+		//delete in the links coming from the deleted node
+		float[][] newArray = new float[this.links[layer].length - 1][];
+		int j = 0;
+		for (int i = 0; i < this.links[layer].length; i++) {
+		    if (i != position) newArray[j++] = this.links[layer][i];
 		}
-		
+		this.links[layer] = newArray;
+		//delete the links going to the deleted node
+		for (int i = 0; i < this.links[layer-1].length; i++) {
+			this.links[layer-1][i] = deleteFromArray(this.links[layer-1][i], position);
+		}
+		//registration
+		if (traceMutation) this.mutations.add(new MutationDeletionNode(layer, position));
 	}
 	
 	/***********************************************************************************/
@@ -215,8 +255,9 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public void deleteRandomNode() {
-		// TODO Auto-generated method stub
-		
+		int layer = random.nextInt(1, this.links.length);
+		int position = random.nextInt(this.nodes[layer].length);
+		this.deleteNode(layer, position);
 	}
 
 	@Override
@@ -257,6 +298,7 @@ public class LayeredBrain extends Brain {
 	@Override
 	public byte[] toBytes() {
 		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
