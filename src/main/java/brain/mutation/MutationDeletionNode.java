@@ -9,10 +9,10 @@ public class MutationDeletionNode extends Mutation {
 	 * @param nodeArray the number of the array of the deleted node
 	 * @param nodePosition the position in the array of the deleted node.
 	 */
-	public MutationDeletionNode(short nodeArray, short nodePosition) {
+	public MutationDeletionNode(int nodeArray, int nodePosition) {
 		super();
-		this.nodeArray = nodeArray;
-		this.nodePosition = nodePosition;
+		this.nodeArray = (short) nodeArray;
+		this.nodePosition = (short) nodePosition;
 	}
 
 	/**

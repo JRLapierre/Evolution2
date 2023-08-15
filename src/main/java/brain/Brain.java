@@ -58,7 +58,7 @@ public abstract class Brain {
 		case (1):
 			return new FlexibleBrain(bb);
 		case (2):
-			return null;
+			return new LayeredBrain(bb);
 		default:
 			System.err.println("error while recuperating the datas : the type " + type 
 					+ " is unrecognized");
@@ -76,6 +76,8 @@ public abstract class Brain {
 	public Brain duplicate() {
 		if (this instanceof FlexibleBrain flexibleBrain)
 			return new FlexibleBrain(flexibleBrain);
+		if (this instanceof LayeredBrain layeredBrain)
+			return new LayeredBrain(layeredBrain);
 		return null;
 	}
 	
@@ -155,6 +157,14 @@ public abstract class Brain {
 	 * 1 : number of the containing array of the target node(1 for inputs, 2 for outputs, 3 for hidden)<br>
 	 * 2 : position of the target node in the array<br>
 	 * 4 : factor of the link<br>
+	 * <br>
+	 * For a LayeredBrain : <br>
+	 * 1 : kind of brain (2 for LayeredBrain)<br>
+	 * 2 : number of layers (total) <br>
+	 * for each layer : <br>
+	 * 2 : number of nodes <br>
+	 * for each link : <br>
+	 * 4 : multiplicative factor <br>
 	 * @return an array of bytes giving information on the brain
 	 */
 	public abstract byte[] toBytes();

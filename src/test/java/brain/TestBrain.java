@@ -253,5 +253,102 @@ class TestBrain {
 		assertTrue(b.mutations.get(0) instanceof MutationLinkExtremity);
 		assertTrue(b.getLinks().get(0) == ((MutationLinkExtremity) b.mutations.get(0)).getLink());
 	}
+	
+	@Test
+	void testLayeredBrainLinkFactor() {
+		Brain.setTraceMutation(true);
+		LayeredBrain.setDefaultLinkValue(0);
+		LayeredBrain.setDefaultLinkVariation(0);
+		LayeredBrain b = new LayeredBrain(2, 2, 0, 0);
+		b.changeLinkFactor(1, 0, 0, 0);
+		float[] inputs = new float[] {1, 1};
+		float[] outputs = b.compute(inputs);
+		assertEquals(1, outputs[0]);
+		assertEquals(0, outputs[1]);
+		
+		LayeredBrain.setDefaultLinkValue(1);
+		LayeredBrain b2 = new LayeredBrain(1, 1, 0, 0);
+		outputs = b2.compute(new float[] {1});
+		assertTrue(outputs[0] == 1);
+		b2.changeRandomLinkFactor(50);
+		outputs = b2.compute(new float[] {1});
+		assertFalse(outputs[0] == 1);
+		
+		assertTrue(b2.mutations.get(0) instanceof MutationLinkFactor);
+		assertEquals(0, ((MutationLinkFactor) b2.mutations.get(0)).getOriginArray());
+		assertEquals(0, ((MutationLinkFactor) b2.mutations.get(0)).getOriginPosition());
+		assertEquals(1, ((MutationLinkFactor) b2.mutations.get(0)).getTargetArray());
+		assertEquals(0, ((MutationLinkFactor) b2.mutations.get(0)).getTargetPosition());
+		assertEquals(1, ((MutationLinkFactor) b2.mutations.get(0)).getOldFactor());
+		assertEquals(outputs[0] - 1, ((MutationLinkFactor) b2.mutations.get(0)).getChangement());
+	}
+	
+	@Test
+	void testLayeredBrainAdditionNode() {
+		Brain.setTraceMutation(true);
+		LayeredBrain.setDefaultLinkValue(1);
+		LayeredBrain.setDefaultLinkVariation(0);
+		LayeredBrain b = new LayeredBrain(1, 1, 1, 0);
+		float[] inputs = new float[] {1};
+		float[] outputs = b.compute(inputs);
+		assertEquals(0, outputs[0]);
+		b.addRandomNode();
+		outputs = b.compute(inputs);
+		assertEquals(1, outputs[0]);
+		
+		assertTrue(b.mutations.get(0) instanceof MutationAdditionNode);
+		assertEquals(1, ((MutationAdditionNode) b.mutations.get(0)).getLayer());
+
+	}
+	
+	@Test
+	void testLayeredBrainDeletionNode() {
+		Brain.setTraceMutation(true);
+		LayeredBrain.setDefaultLinkValue(1);
+		LayeredBrain.setDefaultLinkVariation(0);
+		LayeredBrain b = new LayeredBrain(1, 1, 2, 2);
+		float[] inputs = new float[] {1};
+		float[] outputs = b.compute(inputs);
+		assertEquals(4, outputs[0]);
+		b.deleteRandomNode();
+		outputs = b.compute(inputs);
+		assertEquals(2, outputs[0]);
+		
+		assertTrue(b.mutations.get(0) instanceof MutationDeletionNode);
+	}
+	
+	@Test
+	void testLayeredBrainCopy() {
+		LayeredBrain.setDefaultLinkValue(0.7f);
+		LayeredBrain.setDefaultLinkVariation(0.3f);
+		LayeredBrain original = new LayeredBrain(1, 1, 2, 3);
+		original.addRandomNode();
+		original.deleteRandomNode();
+		original.changeRandomLinkFactor(0.5f);
+		original.changeRandomLinkFactor(0.5f);
+		Brain copy = original.duplicate();
+		float[] inputs = new float[] {1};
+		float[] outputsOriginal = original.compute(inputs);
+		float[] outputsCopy = copy.compute(inputs);
+		assertEquals(outputsOriginal[0], outputsCopy[0]);
+	}
+	
+	@Test
+	void testLayeredBrainToByte() {
+		LayeredBrain.setDefaultLinkValue(0.7f);
+		LayeredBrain.setDefaultLinkVariation(0.3f);
+		LayeredBrain original = new LayeredBrain(1, 1, 2, 3);
+		original.addRandomNode();
+		original.deleteRandomNode();
+		original.changeRandomLinkFactor(0.5f);
+		original.changeRandomLinkFactor(0.5f);
+		byte[] array = original.toBytes();
+		ByteBuffer bb = ByteBuffer.wrap(array);
+		Brain copy = Brain.restore(bb);
+		float[] inputs = new float[] {1};
+		float[] outputsOriginal = original.compute(inputs);
+		float[] outputsCopy = copy.compute(inputs);
+		assertEquals(outputsOriginal[0], outputsCopy[0]);
+	}
 
 }

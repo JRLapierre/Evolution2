@@ -446,7 +446,7 @@ public class FlexibleBrain extends Brain {
 	@Override
 	public void addRandomNode() {
 		this.addNode();
-		if (traceMutation) this.mutations.add(new MutationAdditionNode());
+		if (traceMutation) this.mutations.add(new MutationAdditionNode(2));
 		
 	}
 
