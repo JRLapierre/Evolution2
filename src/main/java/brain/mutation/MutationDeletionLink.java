@@ -1,5 +1,7 @@
 package brain.mutation;
 
+import java.nio.ByteBuffer;
+
 public class MutationDeletionLink extends Mutation {
 	private short originArray;
 	private short originPosition;
@@ -63,6 +65,20 @@ public class MutationDeletionLink extends Mutation {
 	 */
 	public float getFactor() {
 		return factor;
+	}
+
+	@Override
+	public byte[] toByte() {
+		ByteBuffer bb = ByteBuffer.allocate(13);
+		//type byte (4)
+		bb.put((byte) 4);
+		//for each element
+		bb.putShort(originArray);
+		bb.putShort(originPosition);
+		bb.putShort(targetArray);
+		bb.putShort(targetPosition);
+		bb.putFloat(factor);
+		return bb.array();
 	}
 	
 }

@@ -1,5 +1,7 @@
 package brain.mutation;
 
+import java.nio.ByteBuffer;
+
 public class MutationAdditionNode extends Mutation {
 	private short layer;
 	
@@ -17,5 +19,15 @@ public class MutationAdditionNode extends Mutation {
 	 */
 	public short getLayer() {
 		return layer;
+	}
+
+	@Override
+	public byte[] toByte() {
+		ByteBuffer bb = ByteBuffer.allocate(3);
+		//the type
+		bb.put((byte) 1);
+		//the datas
+		bb.putShort(layer);
+		return bb.array();
 	}
 }

@@ -1,5 +1,7 @@
 package brain.mutation;
 
+import java.nio.ByteBuffer;
+
 public class MutationDeletionNode extends Mutation {
 	private short nodeArray;
 	private short nodePosition;
@@ -27,6 +29,17 @@ public class MutationDeletionNode extends Mutation {
 	 */
 	public short getNodePosition() {
 		return nodePosition;
+	}
+
+	@Override
+	public byte[] toByte() {
+		ByteBuffer bb = ByteBuffer.allocate(5);
+		//byte for the type (2)
+		bb.put((byte) 2);
+		//shorts for the values
+		bb.putShort(nodeArray);
+		bb.putShort(nodePosition);
+		return bb.array();
 	}
 	
 	

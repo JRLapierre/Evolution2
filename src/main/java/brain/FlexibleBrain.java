@@ -436,8 +436,8 @@ public class FlexibleBrain extends Brain {
 		//to register the mutation
 		if (traceMutation) {
 			short[] nodeCoordinates = getNodeCoordinates(oldNode);
-			this.mutations.add(new MutationLinkExtremity(
-					link, origin, nodeCoordinates[0], nodeCoordinates[1]));
+			this.mutations.add(new MutationLinkExtremity(getLinkCoordinates(link), 
+					origin, nodeCoordinates[0], nodeCoordinates[1]));
 		}
 	}
 

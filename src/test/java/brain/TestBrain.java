@@ -251,7 +251,6 @@ class TestBrain {
 		b.addLink(b.getInputs()[0], b.getOutputs()[0], 1);
 		b.changeRandomLinkExtremity();
 		assertTrue(b.mutations.get(0) instanceof MutationLinkExtremity);
-		assertTrue(b.getLinks().get(0) == ((MutationLinkExtremity) b.mutations.get(0)).getLink());
 	}
 	
 	@Test
