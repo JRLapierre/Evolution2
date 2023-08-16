@@ -3,9 +3,11 @@ package brain;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
+import brain.mutation.Mutation;
 import brain.mutation.MutationAdditionLink;
 import brain.mutation.MutationAdditionNode;
 import brain.mutation.MutationDeletionLink;
@@ -348,6 +350,49 @@ class TestBrain {
 		float[] outputsOriginal = original.compute(inputs);
 		float[] outputsCopy = copy.compute(inputs);
 		assertEquals(outputsOriginal[0], outputsCopy[0]);
+	}
+	
+	@Test
+	void testMutationsToByte() {
+		//add node
+		Mutation m1 = new MutationAdditionNode(2);
+		ByteBuffer bb1 = ByteBuffer.wrap(m1.toByte());
+		Mutation m1Copy = Mutation.restore(bb1);
+		assertTrue(Arrays.equals(m1.toByte(), m1Copy.toByte()));
+		//delete node
+		Mutation m2 = new MutationDeletionNode(2, 3);
+		ByteBuffer bb2 = ByteBuffer.wrap(m2.toByte());
+		Mutation m2Copy = Mutation.restore(bb2);
+		assertTrue(Arrays.equals(m2.toByte(), m2Copy.toByte()));
+		//add link
+		Mutation m3 = new MutationAdditionLink(2, 4, 3, 0, 0.5f);
+		ByteBuffer bb3 = ByteBuffer.wrap(m3.toByte());
+		Mutation m3Copy = Mutation.restore(bb3);
+		assertTrue(Arrays.equals(m3.toByte(), m3Copy.toByte()));
+		assertEquals(0.5f, ((MutationAdditionLink) m3).getFactor());
+		//delete link
+		Mutation m4 = new MutationDeletionLink(2, 4, 4, 0, 0.5f);
+		ByteBuffer bb4 = ByteBuffer.wrap(m4.toByte());
+		Mutation m4Copy = Mutation.restore(bb4);
+		assertTrue(Arrays.equals(m4.toByte(), m4Copy.toByte()));
+		//change factor
+		Mutation m5 = new MutationLinkFactor(2, 5, 5, 0, 0.5f, 0.6f);
+		ByteBuffer bb5 = ByteBuffer.wrap(m5.toByte());
+		Mutation m5Copy = Mutation.restore(bb5);
+		assertTrue(Arrays.equals(m5.toByte(), m5Copy.toByte()));
+		//change extremity
+		Mutation m6 = new MutationLinkExtremity(new short[] {2, 6, 6, 0}, true, 2, 3);
+		ByteBuffer bb6 = ByteBuffer.wrap(m6.toByte());
+		Mutation m6Copy = Mutation.restore(bb6);
+		assertTrue(Arrays.equals(m6.toByte(), m6Copy.toByte()));
+		MutationLinkExtremity m6cast = (MutationLinkExtremity) m6;
+		assertEquals(2, m6cast.getLinkCoordinates()[0]);
+		assertEquals(6, m6cast.getLinkCoordinates()[1]);
+		assertEquals(6, m6cast.getLinkCoordinates()[2]);
+		assertEquals(0, m6cast.getLinkCoordinates()[3]);
+		assertTrue(m6cast.isOrigin());
+		assertEquals(2, m6cast.getOldNodeArray());
+		assertEquals(3, m6cast.getOldNodePosition());
 	}
 
 }

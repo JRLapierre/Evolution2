@@ -15,11 +15,12 @@ public class MutationLinkExtremity extends Mutation {
 	 * @param oldNodeArray The number of the node array
 	 * @param oldNodePosition the position of the node in the array
 	 */
-	public MutationLinkExtremity(short[] linkCoordinates, boolean origin, short oldNodeArray, short oldNodePosition) {
+	public MutationLinkExtremity(short[] linkCoordinates, boolean origin, 
+			int oldNodeArray, int oldNodePosition) {
 		this.linkCoordinates = linkCoordinates;
 		this.origin = origin;
-		this.oldNodeArray = oldNodeArray;
-		this.oldNodePosition = oldNodePosition;
+		this.oldNodeArray = (short) oldNodeArray;
+		this.oldNodePosition = (short) oldNodePosition;
 	}
 	
 	/**

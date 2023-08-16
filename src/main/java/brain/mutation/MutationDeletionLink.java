@@ -18,16 +18,16 @@ public class MutationDeletionLink extends Mutation {
 	 * @param factor the factor of the link
 	 */
 	public MutationDeletionLink(
-			short originArray, 
-			short originPosition, 
-			short targetArray, 
-			short targetPosition,
+			int originArray, 
+			int originPosition, 
+			int targetArray, 
+			int targetPosition,
 			float factor
 			) {
-		this.originArray = originArray;
-		this.originPosition = originPosition;
-		this.targetArray = targetArray;
-		this.targetPosition = targetPosition;
+		this.originArray = (short) originArray;
+		this.originPosition = (short) originPosition;
+		this.targetArray = (short) targetArray;
+		this.targetPosition = (short) targetPosition;
 		this.factor = factor;
 	}
 	

@@ -20,17 +20,17 @@ public class MutationLinkFactor extends Mutation {
 	 * @param changement the changement of the factor
 	 */
 	public MutationLinkFactor(
-			short originArray, 
-			short originPosition, 
-			short targetArray, 
-			short targetPosition,
+			int originArray, 
+			int originPosition, 
+			int targetArray, 
+			int targetPosition,
 			float oldFactor, 
 			float changement
 			) {
-		this.originArray = originArray;
-		this.originPosition = originPosition;
-		this.targetArray = targetArray;
-		this.targetPosition = targetPosition;
+		this.originArray = (short) originArray;
+		this.originPosition = (short) originPosition;
+		this.targetArray = (short) targetArray;
+		this.targetPosition = (short) targetPosition;
 		this.oldFactor = oldFactor;
 		this.changement = changement;
 	}
