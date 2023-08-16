@@ -27,13 +27,25 @@ public class MutationLinkFactor extends Mutation {
 			float oldFactor, 
 			float changement
 			) {
-		super();
 		this.originArray = originArray;
 		this.originPosition = originPosition;
 		this.targetArray = targetArray;
 		this.targetPosition = targetPosition;
 		this.oldFactor = oldFactor;
 		this.changement = changement;
+	}
+	
+	/**
+	 * constructor to recreate the trace of the mutation from a save
+	 * @param bb the ByteBuffer containing the informations
+	 */
+	protected MutationLinkFactor(ByteBuffer bb) {
+		this.originArray = bb.getShort();
+		this.originPosition = bb.getShort();
+		this.targetArray = bb.getShort();
+		this.targetPosition = bb.getShort();
+		this.oldFactor = bb.getFloat();
+		this.changement = bb.getFloat();
 	}
 
 	/**

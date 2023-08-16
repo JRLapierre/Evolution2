@@ -12,9 +12,17 @@ public class MutationDeletionNode extends Mutation {
 	 * @param nodePosition the position in the array of the deleted node.
 	 */
 	public MutationDeletionNode(int nodeArray, int nodePosition) {
-		super();
 		this.nodeArray = (short) nodeArray;
 		this.nodePosition = (short) nodePosition;
+	}
+	
+	/**
+	 * constructor to recreate the trace of the mutation from a save
+	 * @param bb the ByteBuffer containing the informations
+	 */
+	protected MutationDeletionNode(ByteBuffer bb) {
+		this.nodeArray = bb.getShort();
+		this.nodePosition = bb.getShort();
 	}
 
 	/**

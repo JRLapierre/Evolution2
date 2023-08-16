@@ -13,17 +13,17 @@ public abstract class Mutation {
 		byte type = bb.get();
 		switch(type) {
 		case(1):
-			//additionNode
+			return new MutationAdditionNode(bb);
 		case(2):
-			//deletionNode
+			return new MutationDeletionNode(bb);
 		case(3):
-			//additionLink
+			return new MutationAdditionLink(bb);
 		case(4):
-			//deletionLink
+			return new MutationDeletionLink(bb);
 		case(5):
-			//linkFactor
+			return new MutationLinkFactor(bb);
 		case(6):
-			//linkExtremity
+			return new MutationLinkExtremity(bb);
 		default:
 			return null;
 		}

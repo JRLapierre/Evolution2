@@ -14,6 +14,14 @@ public class MutationAdditionNode extends Mutation {
 	}
 	
 	/**
+	 * constructor to recreate the trace of the mutation from a save
+	 * @param bb the ByteBuffer containing the informations
+	 */
+	protected MutationAdditionNode(ByteBuffer bb) {
+		this.layer = bb.getShort();
+	}
+	
+	/**
 	 * getter for the layer
 	 * @return the layer of the new node
 	 */

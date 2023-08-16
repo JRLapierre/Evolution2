@@ -24,12 +24,23 @@ public class MutationAdditionLink extends Mutation {
 			short targetPosition,
 			float factor
 			) {
-		super();
 		this.originArray = originArray;
 		this.originPosition = originPosition;
 		this.targetArray = targetArray;
 		this.targetPosition = targetPosition;
 		this.factor = factor;
+	}
+	
+	/**
+	 * constructor to recreate the trace of the mutation from a save
+	 * @param bb the ByteBuffer containing the informations
+	 */
+	protected MutationAdditionLink(ByteBuffer bb) {
+		this.originArray = bb.getShort();
+		this.originPosition = bb.getShort();
+		this.targetArray = bb.getShort();
+		this.targetPosition = bb.getShort();
+		this.factor = bb.getFloat();
 	}
 
 	/**
