@@ -191,10 +191,10 @@ class TestBrain {
 		b.deleteRandomNode();
 		assertEquals(0, b.getHidden().length);
 		assertEquals(1, b.getLinks().size());
-		assertEquals(1,  b.mutations.size());
-		assertTrue(b.mutations.get(0) instanceof MutationDeletionNode);
-		assertEquals(2, ((MutationDeletionNode) b.mutations.get(0)).getNodeArray());
-		assertEquals(0, ((MutationDeletionNode) b.mutations.get(0)).getNodePosition());
+		assertEquals(4,  b.mutations.size());
+		assertTrue(b.mutations.get(3) instanceof MutationDeletionNode);
+		assertEquals(2, ((MutationDeletionNode) b.mutations.get(3)).getNodeArray());
+		assertEquals(0, ((MutationDeletionNode) b.mutations.get(3)).getNodePosition());
 	}
 	
 	@Test
@@ -204,13 +204,13 @@ class TestBrain {
 		b.addLink(b.getInputs()[0], b.getOutputs()[0], 1);
 		b.deleteRandomLink();
 		assertEquals(0, b.getLinks().size());
-		assertEquals(1, b.mutations.size());
-		assertTrue(b.mutations.get(0) instanceof MutationDeletionLink);
-		assertEquals(1, ((MutationDeletionLink) b.mutations.get(0)).getOriginArray());
-		assertEquals(0, ((MutationDeletionLink) b.mutations.get(0)).getOriginPosition());
-		assertEquals(3, ((MutationDeletionLink) b.mutations.get(0)).getTargetArray());
-		assertEquals(0, ((MutationDeletionLink) b.mutations.get(0)).getTargetPosition());
-		assertEquals(1, ((MutationDeletionLink) b.mutations.get(0)).getFactor());
+		assertEquals(2, b.mutations.size());
+		assertTrue(b.mutations.get(1) instanceof MutationDeletionLink);
+		assertEquals(1, ((MutationDeletionLink) b.mutations.get(1)).getOriginArray());
+		assertEquals(0, ((MutationDeletionLink) b.mutations.get(1)).getOriginPosition());
+		assertEquals(3, ((MutationDeletionLink) b.mutations.get(1)).getTargetArray());
+		assertEquals(0, ((MutationDeletionLink) b.mutations.get(1)).getTargetPosition());
+		assertEquals(1, ((MutationDeletionLink) b.mutations.get(1)).getFactor());
 	}
 	
 	@Test
@@ -243,20 +243,20 @@ class TestBrain {
 		FlexibleBrain b = new FlexibleBrain(1, 0, 1);
 		b.addLink(b.getInputs()[0], b.getOutputs()[0], 1);
 		b.changeRandomLinkFactor(50);
-		assertTrue(b.mutations.get(0) instanceof MutationLinkFactor);
-		assertEquals(1, ((MutationLinkFactor) b.mutations.get(0)).getOriginArray());
-		assertEquals(0, ((MutationLinkFactor) b.mutations.get(0)).getOriginPosition());
-		assertEquals(3, ((MutationLinkFactor) b.mutations.get(0)).getTargetArray());
-		assertEquals(0, ((MutationLinkFactor) b.mutations.get(0)).getTargetPosition());
-		assertEquals(1, ((MutationLinkFactor) b.mutations.get(0)).getOldFactor());
+		assertTrue(b.mutations.get(1) instanceof MutationLinkFactor);
+		assertEquals(1, ((MutationLinkFactor) b.mutations.get(1)).getOriginArray());
+		assertEquals(0, ((MutationLinkFactor) b.mutations.get(1)).getOriginPosition());
+		assertEquals(3, ((MutationLinkFactor) b.mutations.get(1)).getTargetArray());
+		assertEquals(0, ((MutationLinkFactor) b.mutations.get(1)).getTargetPosition());
+		assertEquals(1, ((MutationLinkFactor) b.mutations.get(1)).getOldFactor());
 		float[] input = new float[1];
 		input[0] = 1f;
 		float[] results;
 		//test of the save
 		FlexibleBrain.setTimeToCompute(1);
 		results = b.compute(input);
-		assertEquals(results[0], ((MutationLinkFactor) b.mutations.get(0)).getOldFactor()
-				+ ((MutationLinkFactor) b.mutations.get(0)).getChangement());
+		assertEquals(results[0], ((MutationLinkFactor) b.mutations.get(1)).getOldFactor()
+				+ ((MutationLinkFactor) b.mutations.get(1)).getChangement());
 	}
 	
 	@Test
@@ -265,7 +265,7 @@ class TestBrain {
 		FlexibleBrain b = new FlexibleBrain(1, 50, 1);
 		b.addLink(b.getInputs()[0], b.getOutputs()[0], 1);
 		b.changeRandomLinkExtremity();
-		assertTrue(b.mutations.get(0) instanceof MutationLinkExtremity);
+		assertTrue(b.mutations.get(1) instanceof MutationLinkExtremity);
 	}
 	
 	@Test
