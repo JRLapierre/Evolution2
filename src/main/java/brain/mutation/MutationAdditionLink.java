@@ -1,5 +1,7 @@
 package brain.mutation;
 
+import java.nio.ByteBuffer;
+
 public class MutationAdditionLink extends Mutation {
 	private short originArray;
 	private short originPosition;
@@ -16,18 +18,29 @@ public class MutationAdditionLink extends Mutation {
 	 * @param factor the factor of the link
 	 */
 	public MutationAdditionLink(
-			short originArray, 
-			short originPosition, 
-			short targetArray, 
-			short targetPosition,
+			int originArray, 
+			int originPosition, 
+			int targetArray, 
+			int targetPosition,
 			float factor
 			) {
-		super();
-		this.originArray = originArray;
-		this.originPosition = originPosition;
-		this.targetArray = targetArray;
-		this.targetPosition = targetPosition;
+		this.originArray = (short) originArray;
+		this.originPosition = (short) originPosition;
+		this.targetArray = (short) targetArray;
+		this.targetPosition = (short) targetPosition;
 		this.factor = factor;
+	}
+	
+	/**
+	 * constructor to recreate the trace of the mutation from a save
+	 * @param bb the ByteBuffer containing the informations
+	 */
+	protected MutationAdditionLink(ByteBuffer bb) {
+		this.originArray = bb.getShort();
+		this.originPosition = bb.getShort();
+		this.targetArray = bb.getShort();
+		this.targetPosition = bb.getShort();
+		this.factor = bb.getFloat();
 	}
 
 	/**
@@ -63,5 +76,19 @@ public class MutationAdditionLink extends Mutation {
 	 */
 	public float getFactor() {
 		return factor;
+	}
+
+	@Override
+	public byte[] toByte() {
+		ByteBuffer bb = ByteBuffer.allocate(13);
+		//type byte (3)
+		bb.put((byte) 3);
+		//for each element
+		bb.putShort(originArray);
+		bb.putShort(originPosition);
+		bb.putShort(targetArray);
+		bb.putShort(targetPosition);
+		bb.putFloat(factor);
+		return bb.array();
 	}
 }

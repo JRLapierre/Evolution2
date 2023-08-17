@@ -277,6 +277,8 @@ public class FlexibleBrain extends Brain {
 		for (int i = 0; i < nbLinks; i++) {
 			this.links.add(new Link(decodeNode(bb), decodeNode(bb), bb.getFloat()));
 		}
+		//the mutations
+		if (traceMutation) this.restoreMutation(bb);
 	}
 	
 	/**
@@ -355,6 +357,12 @@ public class FlexibleBrain extends Brain {
 	 */
 	void addLink(Node origin, Node target, float factor) {
 		this.links.add(new Link(origin, target, factor));
+		//if we want to keep trace of the change
+		if (traceMutation) {
+			short[] coordinates = getLinkCoordinates(this.links.getLast());
+			this.mutations.add(new MutationAdditionLink(coordinates[0], coordinates[1], 
+					coordinates[2], coordinates[3], factor));
+		}
 	}
 	
 	/**
@@ -363,6 +371,7 @@ public class FlexibleBrain extends Brain {
 	void addNode() {
 		this.hidden = Arrays.copyOf(this.hidden, this.hidden.length + 1);
 		this.hidden[this.hidden.length - 1] = new Node();
+		if (traceMutation) this.mutations.add(new MutationAdditionNode(2));
 	}
 	
 	/**
@@ -370,6 +379,13 @@ public class FlexibleBrain extends Brain {
 	 * @param position the position of the link in the list
 	 */
 	void deleteLink(int position) {
+		if (traceMutation) {
+			Link link = this.links.get(position);
+			short[] coordinates = getLinkCoordinates(link);
+			//adding the mutation to the list
+			this.mutations.add(new MutationDeletionLink(coordinates[0], coordinates[1], 
+					coordinates[2], coordinates[3], link.factor));
+		}
 		this.links.remove(position);
 	}
 	
@@ -392,6 +408,10 @@ public class FlexibleBrain extends Brain {
 		    if (i != position) newArray[j++] = this.hidden[i];
 		}
 		this.hidden = newArray;
+		//if we want to trace the mutations
+		if (traceMutation) {
+			this.mutations.add(new MutationDeletionNode((short) 2, (short) position));
+		}
 	}
 	
 	/***********************************************************************************/
@@ -436,8 +456,8 @@ public class FlexibleBrain extends Brain {
 		//to register the mutation
 		if (traceMutation) {
 			short[] nodeCoordinates = getNodeCoordinates(oldNode);
-			this.mutations.add(new MutationLinkExtremity(
-					link, origin, nodeCoordinates[0], nodeCoordinates[1]));
+			this.mutations.add(new MutationLinkExtremity(getLinkCoordinates(link), 
+					origin, nodeCoordinates[0], nodeCoordinates[1]));
 		}
 	}
 
@@ -446,7 +466,6 @@ public class FlexibleBrain extends Brain {
 	@Override
 	public void addRandomNode() {
 		this.addNode();
-		if (traceMutation) this.mutations.add(new MutationAdditionNode(2));
 		
 	}
 
@@ -467,12 +486,6 @@ public class FlexibleBrain extends Brain {
 			this.outputs[posTarget - this.hidden.length] : this.outputs[posTarget];
 		//creating the new link
 		this.addLink(origin, target, factor);
-		//if we want to keep trace of the change
-		if (traceMutation) {
-			short[] coordinates = getLinkCoordinates(this.links.getLast());
-			this.mutations.add(new MutationAdditionLink(coordinates[0], coordinates[1], 
-					coordinates[2], coordinates[3], factor));
-		}
 	}
 
 	//deletions mutations --------------------------------------------------------------
@@ -483,22 +496,12 @@ public class FlexibleBrain extends Brain {
 		int position = random.nextInt(
 				this.hidden.length);
 		this.deleteNode(position);
-		if (traceMutation) {
-			this.mutations.add(new MutationDeletionNode((short) 2, (short) position));
-		}
 	}
 
 	@Override
 	public void deleteRandomLink() {
 		if (this.links.isEmpty()) return;
 		int linkPosition = random.nextInt(this.links.size());
-		if (traceMutation) {
-			Link link = this.links.get(linkPosition);
-			short[] coordinates = getLinkCoordinates(link);
-			//adding the mutation to the list
-			this.mutations.add(new MutationDeletionLink(coordinates[0], coordinates[1], 
-					coordinates[2], coordinates[3], link.factor));
-		}
 		this.deleteLink(linkPosition);
 	}
 	
@@ -532,7 +535,7 @@ public class FlexibleBrain extends Brain {
 	public byte[] toBytes() {
 		//calcul of the data length
 		int size = this.links.size();
-		int dataLength = 11 + size * 10;
+		int dataLength = 11 + size * 10 + ((traceMutation) ? 17 * this.mutations.size() + 2 : 0);
 		ByteBuffer bb = ByteBuffer.allocate(dataLength);
 		//information about the structure of the brain
 		bb.put((byte) 1); //kind of brain (1 for FlexibleBrain)
@@ -546,8 +549,13 @@ public class FlexibleBrain extends Brain {
 			this.writeNode(bb, link.target, false); //target node
 			bb.putFloat(link.factor); //factor
 		}
-		return bb.array();
+		//if we need to save the mutations
+		if (traceMutation) this.toByteMutation(bb);
+
+	    return bb.array();
 	}
+	
+
 	
 	/**
 	 * this function allows to find the 3 bytes to describe a node.

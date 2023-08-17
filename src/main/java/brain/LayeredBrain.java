@@ -164,6 +164,7 @@ public class LayeredBrain extends Brain {
 				}
 			}
 		}
+		if (traceMutation) this.restoreMutation(bb);
 		
 	}
 	
@@ -349,7 +350,8 @@ public class LayeredBrain extends Brain {
 		for (int i = 0; i < this.links.length; i++) {
 			nbLinks += this.nodes[i].length * this.nodes[i+1].length;
 		}
-		int size = 3 + this.nodes.length*2 + nbLinks*4;
+		int size = 3 + this.nodes.length*2 + nbLinks*4
+				+ ((traceMutation) ? 17 * this.mutations.size() + 2 : 0);
 		ByteBuffer bb = ByteBuffer.allocate(size);
 		//type of the brain (2 for LayeredBrain)(1 byte)
 		bb.put((byte) 2);
@@ -367,6 +369,7 @@ public class LayeredBrain extends Brain {
 				}
 			}
 		}
+		if (traceMutation) this.toByteMutation(bb);
 		return bb.array();
 	}
 

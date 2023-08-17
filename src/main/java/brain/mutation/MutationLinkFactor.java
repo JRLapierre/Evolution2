@@ -1,5 +1,7 @@
 package brain.mutation;
 
+import java.nio.ByteBuffer;
+
 public class MutationLinkFactor extends Mutation {
 	private short originArray;
 	private short originPosition;
@@ -18,20 +20,32 @@ public class MutationLinkFactor extends Mutation {
 	 * @param changement the changement of the factor
 	 */
 	public MutationLinkFactor(
-			short originArray, 
-			short originPosition, 
-			short targetArray, 
-			short targetPosition,
+			int originArray, 
+			int originPosition, 
+			int targetArray, 
+			int targetPosition,
 			float oldFactor, 
 			float changement
 			) {
-		super();
-		this.originArray = originArray;
-		this.originPosition = originPosition;
-		this.targetArray = targetArray;
-		this.targetPosition = targetPosition;
+		this.originArray = (short) originArray;
+		this.originPosition = (short) originPosition;
+		this.targetArray = (short) targetArray;
+		this.targetPosition = (short) targetPosition;
 		this.oldFactor = oldFactor;
 		this.changement = changement;
+	}
+	
+	/**
+	 * constructor to recreate the trace of the mutation from a save
+	 * @param bb the ByteBuffer containing the informations
+	 */
+	protected MutationLinkFactor(ByteBuffer bb) {
+		this.originArray = bb.getShort();
+		this.originPosition = bb.getShort();
+		this.targetArray = bb.getShort();
+		this.targetPosition = bb.getShort();
+		this.oldFactor = bb.getFloat();
+		this.changement = bb.getFloat();
 	}
 
 	/**
@@ -74,5 +88,20 @@ public class MutationLinkFactor extends Mutation {
 	 */
 	public float getChangement() {
 		return changement;
+	}
+
+	@Override
+	public byte[] toByte() {
+		ByteBuffer bb = ByteBuffer.allocate(17);
+		//type byte (5)
+		bb.put((byte) 5);
+		//for each element
+		bb.putShort(originArray);
+		bb.putShort(originPosition);
+		bb.putShort(targetArray);
+		bb.putShort(targetPosition);
+		bb.putFloat(oldFactor);
+		bb.putFloat(changement);
+		return bb.array();
 	}
 }

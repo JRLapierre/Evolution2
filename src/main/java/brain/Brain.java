@@ -67,6 +67,18 @@ public abstract class Brain {
 		}
 	}
 	
+	/**
+	 * bit of code that allows to recreate the trace of the mutations from the binary 
+	 * data. Used in the constructors.
+	 * @param bb the ByteBuffer containing the informations
+	 */
+	protected void restoreMutation(ByteBuffer bb) {
+		short nbMutations = bb.getShort();
+		for (int i = 0; i < nbMutations; i++) {
+			this.mutations.add(Mutation.restore(bb));
+		}
+	}
+	
 	//method to dublicate a brain -------------------------------------------------------
 	
 	/**
@@ -165,8 +177,33 @@ public abstract class Brain {
 	 * 2 : number of nodes <br>
 	 * for each link : <br>
 	 * 4 : multiplicative factor <br>
+	 * <br>
+	 * At the end of each brain, there can be data about mutations. If it is the case, 
+	 * the remaining bytes will be : <br>
+	 * 2 : the number of mutations<br>
+	 * for each mutation<br>
+	 * between 3 and 17 bytes (determined by the toByte of Mutation)<br>
 	 * @return an array of bytes giving information on the brain
 	 */
 	public abstract byte[] toBytes();
 	
+	/**
+	 * If we need to save the mutations, this function allows us to add the bytes 
+	 * describing the mutations to the ByteBuffer. <br>
+	 * This function requires the ByteBuffer to have enougth space to store all the data
+	 * about the mutations and changes the ByteBuffer to get rid of the excess length.
+	 * @param bb The ByteBuffer containing the informations about the rest of the brain
+	 */
+	protected void toByteMutation(ByteBuffer bb) {
+		//the number of mutations
+		bb.putShort((short) this.mutations.size());
+		for(Mutation mutation : this.mutations) {
+			bb.put(mutation.toByte());
+		}
+		//limit the size of the array
+	    // Create a new byte array with the exact size of the data
+	    byte[] result = new byte[bb.position()];
+	    bb.flip(); // Prepare ByteBuffer for reading
+	    bb.get(result); // Copy data to the result array
+	}
 }
