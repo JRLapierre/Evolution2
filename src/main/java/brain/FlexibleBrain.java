@@ -277,6 +277,8 @@ public class FlexibleBrain extends Brain {
 		for (int i = 0; i < nbLinks; i++) {
 			this.links.add(new Link(decodeNode(bb), decodeNode(bb), bb.getFloat()));
 		}
+		//the mutations
+		if (traceMutation) this.restoreMutation(bb);
 	}
 	
 	/**
@@ -532,7 +534,7 @@ public class FlexibleBrain extends Brain {
 	public byte[] toBytes() {
 		//calcul of the data length
 		int size = this.links.size();
-		int dataLength = 11 + size * 10;
+		int dataLength = 11 + size * 10 + ((traceMutation) ? 17 * this.mutations.size() + 2 : 0);
 		ByteBuffer bb = ByteBuffer.allocate(dataLength);
 		//information about the structure of the brain
 		bb.put((byte) 1); //kind of brain (1 for FlexibleBrain)
@@ -546,8 +548,13 @@ public class FlexibleBrain extends Brain {
 			this.writeNode(bb, link.target, false); //target node
 			bb.putFloat(link.factor); //factor
 		}
-		return bb.array();
+		//if we need to save the mutations
+		if (traceMutation) this.toByteMutation(bb);
+
+	    return bb.array();
 	}
+	
+
 	
 	/**
 	 * this function allows to find the 3 bytes to describe a node.

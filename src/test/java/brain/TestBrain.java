@@ -130,23 +130,36 @@ class TestBrain {
 	
 	@Test
 	void testFlexibleBrainBinary() {
+		Brain.setTraceMutation(true);
 		float[] input = new float[1];
 		input[0] = 1f;
 		float[] results;
 		//test of the save
 		FlexibleBrain.setTimeToCompute(2);
 		FlexibleBrain b4 = new FlexibleBrain(1,2,2);
-		b4.addLink(b4.getInputs()[0], b4.getHidden()[0], 1f);
-		b4.addLink(b4.getHidden()[0], b4.getOutputs()[0], 1.5f);
-		b4.addLink(b4.getInputs()[0], b4.getHidden()[1], 1f);
-		b4.addLink(b4.getHidden()[1], b4.getOutputs()[1], 2f);
+		b4.addRandomLink(5f);
+		b4.addRandomLink(5f);
+		b4.addRandomLink(5f);
+		b4.addRandomLink(5f);
+		b4.changeRandomLinkFactor(2f);
+		b4.changeRandomLinkFactor(2f);
+		b4.changeRandomLinkFactor(2f);
+		b4.changeRandomLinkFactor(2f);
+		b4.changeRandomLinkExtremity();
+		b4.changeRandomLinkExtremity();
+		b4.changeRandomLinkExtremity();
+		b4.changeRandomLinkExtremity();
 		
 		byte[] byteArray = b4.toBytes();
 		ByteBuffer bb = ByteBuffer.wrap(byteArray);
 		Brain b5 = Brain.restore(bb);
-		results = b5.compute(input);
-		assertEquals(1.5f, results[0]);
-		assertEquals(2f, results[1]);
+		results = b4.compute(input);
+		float[] results2 = b5.compute(input);
+		assertEquals(results[0], results2[0]);
+		assertEquals(results[1], results2[1]);
+		for (int i = 0; i < b4.mutations.size(); i++) {
+			assertEquals(b4.mutations.get(i).getClass(), b5.mutations.get(i).getClass());
+		}
 	}
 	
 	@Test
@@ -336,6 +349,7 @@ class TestBrain {
 	
 	@Test
 	void testLayeredBrainToByte() {
+		Brain.setTraceMutation(true);
 		LayeredBrain.setDefaultLinkValue(0.7f);
 		LayeredBrain.setDefaultLinkVariation(0.3f);
 		LayeredBrain original = new LayeredBrain(1, 1, 2, 3);
@@ -350,6 +364,9 @@ class TestBrain {
 		float[] outputsOriginal = original.compute(inputs);
 		float[] outputsCopy = copy.compute(inputs);
 		assertEquals(outputsOriginal[0], outputsCopy[0]);
+		for (int i = 0; i < original.mutations.size(); i++) {
+			assertEquals(original.mutations.get(i).getClass(), copy.mutations.get(i).getClass());
+		}
 	}
 	
 	@Test
