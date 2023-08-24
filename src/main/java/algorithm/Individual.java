@@ -100,6 +100,30 @@ public class Individual {
 	/***********************************************************************************/
 	
 	/**
+	 * getter to get the id of the individual
+	 * @return the id of the individual
+	 */
+	public int getId() {
+		return this.id;
+	}
+	
+	/**
+	 * getter for the id of the parent of the individual
+	 * @return the id of the parent of the individual
+	 */
+	public int getParentId() {
+		return this.parentId;
+	}
+	
+	/**
+	 * getter for a safe access to the brain.
+	 * @return the brain
+	 */
+	public Brain getBrain() {
+		return this.brain;
+	}
+	
+	/**
 	 * Function that generate the binary code to register an individual
 	 * @return a byte array containing the binary code
 	 */
