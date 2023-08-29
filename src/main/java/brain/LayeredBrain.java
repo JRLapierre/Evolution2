@@ -304,6 +304,7 @@ public class LayeredBrain extends Brain {
 	@Override
 	public void deleteRandomNode() {
 		int layer = random.nextInt(1, this.links.length);
+		if (this.nodes[layer].length == 0) return;
 		int position = random.nextInt(this.nodes[layer].length);
 		this.deleteNode(layer, position);
 	}

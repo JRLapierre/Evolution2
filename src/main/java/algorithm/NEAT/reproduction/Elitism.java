@@ -58,7 +58,7 @@ public class Elitism extends ReproductionAlgorithm {
 			newPopulation[i] = new Individual(population[(i % this.limit) % population.length]);
 		}
 		//mutated clones
-		for (int i = 0; i < this.nbPerfectClones; i++) {
+		for (int i = 0; i < this.nbMutatedClones; i++) {
 			newPopulation[nbPerfectClones + i] = new Individual(population[(i % this.limit) % population.length]);
 			mutate(newPopulation[nbPerfectClones + i].getBrain());			
 		}

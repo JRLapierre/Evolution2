@@ -94,22 +94,22 @@ public abstract class ReproductionAlgorithm {
 	 */
 	protected void mutate(Brain brain) {
 		//link factor
-		if (changeLinkFactor != 0 && random.nextInt(changeLinkFactor) == 1) 
+		if (changeLinkFactor != 0 && random.nextInt(changeLinkFactor) == 0) 
 			brain.changeRandomLinkFactor(minMaxChange);
 		//link extremity
-		if (changeLinkExtremity != 0 && random.nextInt(changeLinkExtremity) == 1) 
+		if (changeLinkExtremity != 0 && random.nextInt(changeLinkExtremity) == 0) 
 			brain.changeRandomLinkExtremity();
 		//add node
-		if (addNode != 0 && random.nextInt(addNode) == 1) 
+		if (addNode != 0 && random.nextInt(addNode) == 0) 
 			brain.addRandomNode();
 		//add link
-		if (addLink != 0 && random.nextInt(addLink) == 1) 
+		if (addLink != 0 && random.nextInt(addLink) == 0) 
 			brain.addRandomLink(minMaxFactor);
 		//delete node
-		if (deleteNode != 0 && random.nextInt(deleteNode) == 1) 
+		if (deleteNode != 0 && random.nextInt(deleteNode) == 0) 
 			brain.deleteRandomNode();
 		//delete link
-		if (deleteLink != 0 && random.nextInt(deleteLink) == 1) 
+		if (deleteLink != 0 && random.nextInt(deleteLink) == 0) 
 			brain.deleteRandomLink();
 	}
 	
