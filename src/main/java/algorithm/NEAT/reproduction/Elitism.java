@@ -1,5 +1,8 @@
 package algorithm.NEAT.reproduction;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import algorithm.NEAT.Individual;
 
 /**
@@ -52,6 +55,7 @@ public class Elitism extends ReproductionAlgorithm {
 	
 	@Override
 	public Individual[] reproduce(Individual[] population) {
+        Arrays.sort(population, Comparator.comparingDouble(Individual::getScore).reversed());
 		Individual[] newPopulation = new Individual[this.nbPerfectClones + this.nbMutatedClones];
 		//perfect clones
 		for (int i = 0; i < this.nbPerfectClones; i++) {

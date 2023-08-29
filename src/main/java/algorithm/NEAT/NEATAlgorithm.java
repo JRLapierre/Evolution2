@@ -50,7 +50,6 @@ public abstract class NEATAlgorithm {
 	 * this function manages the selection and the mutation for the next generation.
 	 */
 	private void reproduce() {
-		//TODO sort by score
 		this.population = reproductionAlgorithm.reproduce(population);
 	}
 	
