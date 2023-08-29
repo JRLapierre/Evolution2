@@ -1,5 +1,6 @@
 package algorithm.NEAT.reproduction;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -49,6 +50,16 @@ public class Elitism extends ReproductionAlgorithm {
 		this.limit = limit;
 	}
 	
+	/**
+	 * Constructor to restore from a save.
+	 * @param bb The ByteBuffer containing the informations
+	 */
+	protected Elitism(ByteBuffer bb) {
+		this.nbPerfectClones = bb.getInt();
+		this.nbMutatedClones = bb.getInt();
+		this.limit = bb.getInt();
+	}
+	
 	/***********************************************************************************/
 	/* 									 methods                                       */
 	/***********************************************************************************/
@@ -68,5 +79,17 @@ public class Elitism extends ReproductionAlgorithm {
 		}
 		
 		return newPopulation;
+	}
+	
+	@Override
+	public byte[] toByte() {
+		//1 (type) + 12 (class parameters) + 32 (mutation parameters)
+		ByteBuffer bb = ByteBuffer.allocate(45);
+		bb.put((byte) 1); //1 for Elitism
+		bb.putInt(nbPerfectClones);
+		bb.putInt(nbMutatedClones);
+		bb.putInt(limit);
+		bb.put(toByteMutations());
+		return bb.array();
 	}
 }

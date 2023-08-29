@@ -2,6 +2,8 @@ package algorithm.NEAT.reproduction;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.nio.ByteBuffer;
+
 import org.junit.jupiter.api.Test;
 
 import algorithm.NEAT.Individual;
@@ -89,6 +91,19 @@ class TestReproductionAlgorithm {
 		assertEquals(30, result2.length);
 		for (int i = 0; i<result2.length; i++) {
 			assertTrue(result2[i] != null);
+		}
+	}
+	
+	@Test
+	void testToByte() {
+		ReproductionAlgorithm algo = new Elitism(10, 20, 15);
+		ByteBuffer bb = ByteBuffer.wrap(algo.toByte());
+		ReproductionAlgorithm copy = ReproductionAlgorithm.restore(bb);
+		byte[] originalArray = algo.toByte();
+		byte[] copyArray = copy.toByte();
+		assertEquals(originalArray.length, copyArray.length);
+		for (int i = 0; i < originalArray.length; i++) {
+			assertEquals(originalArray[i], copyArray[i]);
 		}
 	}
 
