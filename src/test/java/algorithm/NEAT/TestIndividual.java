@@ -1,4 +1,4 @@
-package algorithm;
+package algorithm.NEAT;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import org.junit.jupiter.api.Test;
 
 import brain.Brain;
+import brain.FlexibleBrain;
 import brain.LayeredBrain;
 
 class TestIndividual {
@@ -53,6 +54,17 @@ class TestIndividual {
 		assertEquals(original.getId(), copy.getId());
 		assertEquals(original.getParentId(), copy.getParentId());
 		assertEquals(original.getBrain().compute(new float[] {1})[0], 
-				copy.getBrain().compute(new float[] {1})[0]);	}
+				copy.getBrain().compute(new float[] {1})[0]);
+		}
+	
+	@Test
+	void testIndividualScore() {
+		Individual individual = new Individual(new FlexibleBrain(1, 1, 1));
+		assertEquals(0, individual.getScore());
+		individual.updateScore(2);
+		assertEquals(2, individual.getScore());
+		individual.updateScore(-3.5f);
+		assertEquals(-1.5f, individual.getScore());
+	}
 
 }

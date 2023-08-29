@@ -1,4 +1,4 @@
-package algorithm;
+package algorithm.NEAT;
 
 import java.nio.ByteBuffer;
 
@@ -35,6 +35,11 @@ public class Individual {
 	 * brain of the individual
 	 */
 	private Brain brain;
+	
+	/**
+	 * the score of an individual
+	 */
+	private float score = 0;
 	
 	/***********************************************************************************/
 	/*                              static functions                                   */
@@ -124,7 +129,27 @@ public class Individual {
 	}
 	
 	/**
-	 * Function that generate the binary code to register an individual
+	 * getter for the score
+	 * @return the score of the individual
+	 */
+	public float getScore() {
+		return this.score;
+	}
+	
+	/**
+	 * function that allows us to update the score of an individual easyly.
+	 * @param update the changement of score
+	 */
+	public void updateScore(float update) {
+		this.score += update;
+	}
+	
+	/**
+	 * Function that generate the binary code to register an individual <br>
+	 * the returning array contains : <br>
+	 * 4 bytes for the id; <br>
+	 * 4 bytes for the id of the parent; <br>
+	 * the rest for the brain.
 	 * @return a byte array containing the binary code
 	 */
 	public byte[] toByte() {
