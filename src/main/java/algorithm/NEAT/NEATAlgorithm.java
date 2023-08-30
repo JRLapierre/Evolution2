@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,32 +33,59 @@ public class NEATAlgorithm {
 	 */
 	private ReproductionAlgorithm reproductionAlgorithm;
 	
+	/**
+	 * the name (and the path) of the folder that will contain the . <br>
+	 * By default, the name will be "saves/NEATAlgorithm_" + the current date.
+	 */
 	private String registrationFolder;
+	
+	/**
+	 * The number of generations
+	 */
 	private int numGeneration;
 	
 	/***********************************************************************************/
 	/*                               constructors                                      */
 	/***********************************************************************************/
 	
-	protected NEATAlgorithm(Brain initialBrain, ReproductionAlgorithm reproductionAlgorithm) {
+	public NEATAlgorithm(Brain initialBrain, ReproductionAlgorithm reproductionAlgorithm) {
 		Individual original = new Individual(initialBrain);
 		this.population = new Individual[] {original};
 		this.reproductionAlgorithm = reproductionAlgorithm;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
         this.registrationFolder = "saves/NEATAlgorithm_" + LocalDateTime.now().format(formatter);
-        
+	}
+	
+	/**
+	 * Constructor to restore from save.
+	 * @param folder the folder containing the saves
+	 */
+	public NEATAlgorithm(String folder) {
+		try {
+			//settings file
+			byte[] settingsFile = Files.readAllBytes(Paths.get(folder + "/settings.bin"));
+			ByteBuffer bb = ByteBuffer.wrap(settingsFile);
+			this.reproductionAlgorithm = ReproductionAlgorithm.restore(bb);
+			this.numGeneration = bb.getInt();
+			Individual.setCountId(bb.getInt());
+			//individual files
+			File[] individuals=new File(folder + "/generation_"+this.numGeneration).listFiles();
+			this.population = new Individual[individuals.length];
+			//for each file
+			for (int i = 0; i < individuals.length; i++) {
+				bb = ByteBuffer.wrap(Files.readAllBytes(individuals[i].toPath()));
+				this.population[i] = new Individual(bb);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+	        System.exit(1);
+		}
+
 	}
 	
 	/***********************************************************************************/
-	/*                                 methods                                         */
+	/*                                 getters                                         */
 	/***********************************************************************************/
-	
-	public void setRegistrationFolderName(String newFolder) {
-		File folderFile = new File(newFolder);
-        if (folderFile.isAbsolute() || !Paths.get(newFolder).isAbsolute()) {
-        	this.registrationFolder = newFolder;
-        }
-	}
 	
 	/**
 	 * getter for the reproduction algorithm
@@ -65,6 +93,38 @@ public class NEATAlgorithm {
 	 */
 	public ReproductionAlgorithm getReproductionAlgorithm() {
 		return this.reproductionAlgorithm;
+	}
+	
+	/**
+	 * getter for the number of the last generation
+	 * @return the numero of the last generation
+	 */
+	public int getNumGeneration() {
+		return this.numGeneration;
+	}
+	
+	/**
+	 * getter to obtain the population
+	 * @return the array containing the population
+	 */
+	protected Individual[] getPopulation() {
+		return this.population;
+	}
+	
+	/***********************************************************************************/
+	/*                           functionnal methods                                   */
+	/***********************************************************************************/
+	
+	/**
+	 * Setter to change the saves folder. If the name is incorrect, the folder will not 
+	 * be changed.
+	 * @param newFolder The new folder (and his path) where the saves will be.
+	 */
+	public void setRegistrationFolderName(String newFolder) {
+		File folderFile = new File(newFolder);
+        if (folderFile.isAbsolute() || !Paths.get(newFolder).isAbsolute()) {
+        	this.registrationFolder = newFolder;
+        }
 	}
 	
 	/**
@@ -79,7 +139,7 @@ public class NEATAlgorithm {
 	 * This function allows us to evaluate the population.
 	 */
 	protected void evaluate() {
-		//TODO use a lambda expression
+		//TODO use a lambda expression or something like that
 	}
 	
 	/**
@@ -114,9 +174,10 @@ public class NEATAlgorithm {
 		settingsFile.mkdirs();
 		//informations about the reproductionAlgorithm
 		byte[] reproductionSettings = this.reproductionAlgorithm.toByte();
-		ByteBuffer bb = ByteBuffer.allocate(reproductionSettings.length + 4);
+		ByteBuffer bb = ByteBuffer.allocate(reproductionSettings.length + 8);
 		bb.put(reproductionSettings);
 		bb.putInt(numGeneration);
+		bb.putInt(Individual.getCountId());
     	//file registration
 		String path = this.registrationFolder + "/settings.bin";
 		try {
