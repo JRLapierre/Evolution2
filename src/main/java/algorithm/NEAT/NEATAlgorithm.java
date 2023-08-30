@@ -1,5 +1,13 @@
 package algorithm.NEAT;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 
@@ -8,7 +16,7 @@ import brain.Brain;
  * @author jrl
  *
  */
-public abstract class NEATAlgorithm {
+public class NEATAlgorithm {
 	
 	/***********************************************************************************/
 	/*                                variables                                        */
@@ -24,6 +32,9 @@ public abstract class NEATAlgorithm {
 	 */
 	private ReproductionAlgorithm reproductionAlgorithm;
 	
+	private String registrationFolder;
+	private int numGeneration;
+	
 	/***********************************************************************************/
 	/*                               constructors                                      */
 	/***********************************************************************************/
@@ -32,11 +43,21 @@ public abstract class NEATAlgorithm {
 		Individual original = new Individual(initialBrain);
 		this.population = new Individual[] {original};
 		this.reproductionAlgorithm = reproductionAlgorithm;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+        this.registrationFolder = "saves/NEATAlgorithm_" + LocalDateTime.now().format(formatter);
+        
 	}
 	
 	/***********************************************************************************/
 	/*                                 methods                                         */
 	/***********************************************************************************/
+	
+	public void setRegistrationFolderName(String newFolder) {
+		File folderFile = new File(newFolder);
+        if (folderFile.isAbsolute() || !Paths.get(newFolder).isAbsolute()) {
+        	this.registrationFolder = newFolder;
+        }
+	}
 	
 	/**
 	 * getter for the reproduction algorithm
@@ -49,32 +70,76 @@ public abstract class NEATAlgorithm {
 	/**
 	 * this function manages the selection and the mutation for the next generation.
 	 */
-	private void reproduce() {
+	protected void reproduce() {
 		this.population = reproductionAlgorithm.reproduce(population);
+		this.numGeneration ++;
 	}
 	
 	/**
 	 * This function allows us to evaluate the population.
 	 */
-	protected abstract void evaluate();
-	
-	//TODO something to register the generation
-	public void registerGeneration(String targetFolder) {
-		//create a folder
-		//register the individuals in this folder
+	protected void evaluate() {
+		//TODO use a lambda expression
 	}
 	
-	//TODO something to register simulation parameters
-	public void registerInformations(String targetFolder) {
-		//register in a file
+	/**
+	 * This functions saves a entire generation.
+	 */
+	public void registerGeneration() {
+		//create the folder if it is not created
+		String folderName = this.registrationFolder + "/generation_" + this.numGeneration;
+		File settingsFile = new File(folderName);
+		settingsFile.mkdirs();
+		//create the files for each individual
+		try {
+			for (Individual individual : this.population) {
+				FileOutputStream fos = new FileOutputStream(
+						folderName + "/" + individual.getId() + ".bin");
+            	fos.write(individual.toByte()); 
+            	fos.flush();
+            	fos.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+	        System.exit(1);
+		}
+	}
+	
+	/**
+	 * saves the simutation parameters
+	 */
+	public void registerInformations() {
+		//create the needed folder
+		File settingsFile = new File(this.registrationFolder);
+		settingsFile.mkdirs();
+		//informations about the reproductionAlgorithm
+		byte[] reproductionSettings = this.reproductionAlgorithm.toByte();
+		ByteBuffer bb = ByteBuffer.allocate(reproductionSettings.length + 4);
+		bb.put(reproductionSettings);
+		bb.putInt(numGeneration);
+    	//file registration
+		String path = this.registrationFolder + "/settings.bin";
+		try {
+	    	FileOutputStream fos = new FileOutputStream(path);
+			fos.write(bb.array());
+	    	fos.flush();
+	    	fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+            System.exit(1);
+		}
 	}
 	
 	//main algorithm
 	public void run() {
+
 		
 		//in a loop
 		this.evaluate();
 		this.reproduce();
+		//register after reproduction
+		
+		//register simulation settings on pause or on end
 	}
 	
 
