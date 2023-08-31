@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import algorithm.Evaluation;
+import algorithm.LearningAlgorithm;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 
@@ -18,7 +19,7 @@ import brain.Brain;
  * @author jrl
  *
  */
-public class NEATAlgorithm {
+public class NEATAlgorithm extends LearningAlgorithm{
 	
 	/***********************************************************************************/
 	/*                                variables                                        */
@@ -35,25 +36,21 @@ public class NEATAlgorithm {
 	private ReproductionAlgorithm reproductionAlgorithm;
 	
 	/**
-	 * the name (and the path) of the folder that will contain the . <br>
-	 * By default, the name will be "saves/NEATAlgorithm_" + the current date.
-	 */
-	private String registrationFolder;
-	
-	/**
 	 * The number of generations
 	 */
 	private int numGeneration;
-	
-	/**
-	 * Instance of a functionnal interface to evaluate the population
-	 */
-	private Evaluation evaluation;
 	
 	/***********************************************************************************/
 	/*                               constructors                                      */
 	/***********************************************************************************/
 	
+	/**
+	 * Constructor for a new NEAT Algorithm. 
+	 * @param initialBrain the root brain for all that will be next
+	 * @param reproductionAlgorithm the algorithm that chooses how to make the next 
+	 * generation
+	 * @param evaluation a lambda expression that decide the score of each individual
+	 */
 	public NEATAlgorithm(Brain initialBrain, ReproductionAlgorithm reproductionAlgorithm, 
 			Evaluation evaluation) {
 		this.evaluation = evaluation;
@@ -67,28 +64,22 @@ public class NEATAlgorithm {
 	/**
 	 * Constructor to restore from save.
 	 * @param folder the folder containing the saves
+	 * @throws IOException if the files are not found
 	 */
-	public NEATAlgorithm(String folder) {
-		try {
-			//settings file
-			byte[] settingsFile = Files.readAllBytes(Paths.get(folder + "/settings.bin"));
-			ByteBuffer bb = ByteBuffer.wrap(settingsFile);
-			this.reproductionAlgorithm = ReproductionAlgorithm.restore(bb);
-			this.numGeneration = bb.getInt();
-			Individual.setCountId(bb.getInt());
-			//individual files
-			File[] individuals=new File(folder + "/generation_"+this.numGeneration).listFiles();
-			this.population = new Individual[individuals.length];
-			//for each file
-			for (int i = 0; i < individuals.length; i++) {
-				bb = ByteBuffer.wrap(Files.readAllBytes(individuals[i].toPath()));
-				this.population[i] = new Individual(bb);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-	        System.exit(1);
+	public NEATAlgorithm(String folder, ByteBuffer settings) throws IOException {
+		//settings file
+		this.reproductionAlgorithm = ReproductionAlgorithm.restore(settings);
+		this.numGeneration = settings.getInt();
+		Individual.setCountId(settings.getInt());
+		//individual files
+		File[] individuals=new File(folder + "/generation_"+this.numGeneration).listFiles();
+		this.population = new Individual[individuals.length];
+		//for each file
+		ByteBuffer bb;
+		for (int i = 0; i < individuals.length; i++) {
+			bb = ByteBuffer.wrap(Files.readAllBytes(individuals[i].toPath()));
+			this.population[i] = new Individual(bb);
 		}
-
 	}
 	
 	/***********************************************************************************/
@@ -124,18 +115,6 @@ public class NEATAlgorithm {
 	/***********************************************************************************/
 	
 	/**
-	 * Setter to change the saves folder. If the name is incorrect, the folder will not 
-	 * be changed.
-	 * @param newFolder The new folder (and his path) where the saves will be.
-	 */
-	public void setRegistrationFolderName(String newFolder) {
-		File folderFile = new File(newFolder);
-        if (folderFile.isAbsolute() || !Paths.get(newFolder).isAbsolute()) {
-        	this.registrationFolder = newFolder;
-        }
-	}
-	
-	/**
 	 * this function manages the selection and the mutation for the next generation.
 	 */
 	protected void reproduce() {
@@ -149,6 +128,10 @@ public class NEATAlgorithm {
 	protected void evaluate() {
 		evaluation.evaluate(this.population);
 	}
+	
+	/***********************************************************************************/
+	/*                              saving methods                                     */
+	/***********************************************************************************/
 	
 	/**
 	 * This functions saves a entire generation.
@@ -174,7 +157,7 @@ public class NEATAlgorithm {
 	}
 	
 	/**
-	 * saves the simutation parameters
+	 * saves the simutation parameters.
 	 */
 	public void registerInformations() {
 		//create the needed folder
@@ -182,7 +165,8 @@ public class NEATAlgorithm {
 		settingsFile.mkdirs();
 		//informations about the reproductionAlgorithm
 		byte[] reproductionSettings = this.reproductionAlgorithm.toByte();
-		ByteBuffer bb = ByteBuffer.allocate(reproductionSettings.length + 8);
+		ByteBuffer bb = ByteBuffer.allocate(reproductionSettings.length + 9);
+		bb.put((byte) 1); //1 for the NEATAlgorithm
 		bb.put(reproductionSettings);
 		bb.putInt(numGeneration);
 		bb.putInt(Individual.getCountId());
@@ -199,16 +183,16 @@ public class NEATAlgorithm {
 		}
 	}
 	
-	//main algorithm
-	public void run() {
-
-		
-		//in a loop
+	@Override
+	public void save() {
+		this.registerGeneration();
+		this.registerInformations();
+	}
+	
+	@Override
+	public void next() {
 		this.evaluate();
 		this.reproduce();
-		//register after reproduction
-		
-		//register simulation settings on pause or on end
 	}
 	
 

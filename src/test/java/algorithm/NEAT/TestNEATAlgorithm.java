@@ -9,6 +9,7 @@ import java.util.Comparator;
 import org.junit.jupiter.api.Test;
 
 import algorithm.Evaluation;
+import algorithm.LearningAlgorithm;
 import algorithm.NEAT.reproduction.Elitism;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import brain.Brain;
@@ -85,7 +86,7 @@ class TestNEATAlgorithm {
 		algo.registerGeneration();
 		algo.registerInformations();
 		int oldCountId = Individual.getCountId();
-		NEATAlgorithm save = new NEATAlgorithm("saves/testDataRecuperation");
+		NEATAlgorithm save = (NEATAlgorithm) LearningAlgorithm.restore("saves/testDataRecuperation", null);
 		//reproduction algorithm comparaison
 		byte[] originalReproduction = algo.getReproductionAlgorithm().toByte();
 		byte[] saveReproduction = save.getReproductionAlgorithm().toByte();
@@ -105,7 +106,7 @@ class TestNEATAlgorithm {
 			for (int j = 0; j < originalBytes.length; j++) {
 				assertEquals(originalBytes[j], copyBytes[j]);
 			}
-		}
+		}		
 	}
 	
 	@Test
