@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import algorithm.Evaluation;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 
@@ -44,11 +45,18 @@ public class NEATAlgorithm {
 	 */
 	private int numGeneration;
 	
+	/**
+	 * Instance of a functionnal interface to evaluate the population
+	 */
+	private Evaluation evaluation;
+	
 	/***********************************************************************************/
 	/*                               constructors                                      */
 	/***********************************************************************************/
 	
-	public NEATAlgorithm(Brain initialBrain, ReproductionAlgorithm reproductionAlgorithm) {
+	public NEATAlgorithm(Brain initialBrain, ReproductionAlgorithm reproductionAlgorithm, 
+			Evaluation evaluation) {
+		this.evaluation = evaluation;
 		Individual original = new Individual(initialBrain);
 		this.population = new Individual[] {original};
 		this.reproductionAlgorithm = reproductionAlgorithm;
@@ -139,7 +147,7 @@ public class NEATAlgorithm {
 	 * This function allows us to evaluate the population.
 	 */
 	protected void evaluate() {
-		//TODO use a lambda expression or something like that
+		evaluation.evaluate(this.population);
 	}
 	
 	/**

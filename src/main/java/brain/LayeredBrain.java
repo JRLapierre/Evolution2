@@ -272,7 +272,9 @@ public class LayeredBrain extends Brain {
 	@Override
 	public void changeRandomLinkFactor(float minMaxChange) {
 		short layer = (short) random.nextInt(this.links.length);
+		if (this.links[layer].length == 0) return;
 		short origin = (short) random.nextInt(this.links[layer].length);
+		if (this.links[layer][origin].length == 0) return;
 		short target = (short) random.nextInt(this.links[layer][origin].length);
 		float changement = random.nextFloat(-minMaxChange, minMaxChange);
 		//mutation
