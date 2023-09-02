@@ -52,7 +52,7 @@ public class Controller {
 	/**
 	 * area for displaying whatever the simulation wants
 	 */
-	private JTextArea textArea = new JTextArea();
+	private JTextArea textArea = new JTextArea("click play/pause to start");
 	
 	/***********************************************************************************/
 	/*                              others objects                                     */
@@ -87,7 +87,7 @@ public class Controller {
 	
 	private void initButtons() {
 		//stop button
-		stop.addActionListener(e-> {
+		stop.addActionListener(e -> {
     		if(!algorithm.isPaused()) algorithm.playPause();
     		algorithm.endProgram();
     		window.dispose();
