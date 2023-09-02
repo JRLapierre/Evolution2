@@ -21,15 +21,40 @@ public abstract class LearningAlgorithm extends Thread {
 	/***********************************************************************************/
 	
 	/**
-	 * the name (and the path) of the folder that will contain the . <br>
-	 * By default, the name will be "saves/NEATAlgorithm_" + the current date.
-	 */
-	protected String registrationFolder;
-	
-	/**
 	 * Instance of a functionnal interface to evaluate the population
 	 */
 	protected Evaluation evaluation;
+	
+	/**
+	 * the name (and the path) of the folder that will contain the saves. <br>
+	 */
+	protected String registrationFolder;
+	
+	// control parameters ---------------------------------------------------------------
+	
+	/**
+	 * the choice of the way the simulation will run. <br>
+	 * 0 is for a simulation with no predetermined end.<br>
+	 * 1 is for a simulation who will stop after a set number of iterations<br>
+	 * 2 is for a simulation who will stop after a set time<br>
+	 */
+	private byte runningChoice = 0;
+	
+	/**
+	 * the number of iterations of the learning algorithm if we want a fixed number of 
+	 * iterations.
+	 */
+	private int nbIterations;
+	
+	/**
+	 * The maximum time (in miliseconds) for the simulation to run. <br>
+	 */
+	private long runningTime;
+	
+	/**
+	 * the time passed in pause.
+	 */
+	private long timePaused;
 	
 	/**
 	 * This boolean is true as long as the simulation doesn't end. <br>
@@ -43,6 +68,7 @@ public abstract class LearningAlgorithm extends Thread {
 	 */
 	private boolean pause = true;
 	
+
 	/***********************************************************************************/
 	/*                             control methods                                     */
 	/***********************************************************************************/
@@ -83,6 +109,7 @@ public abstract class LearningAlgorithm extends Thread {
      * method that keep waiting as long as the simuation is paused.
      */
 	private synchronized void pausing() {
+		long startPause = System.currentTimeMillis();
         while (pause && running) {
         	try {
 				wait();
@@ -91,6 +118,41 @@ public abstract class LearningAlgorithm extends Thread {
 				Thread.currentThread().interrupt();
 			}
         }
+        this.timePaused += System.currentTimeMillis() - startPause;
+	}
+	
+	/***********************************************************************************/
+	/*                                    setters                                      */
+	/***********************************************************************************/
+	
+	/**
+	 * Setter to change the saves folder. If the name is incorrect, the folder will not 
+	 * be changed.
+	 * @param newFolder The new folder (and his path) where the saves will be.
+	 */
+	public void setRegistrationFolderName(String newFolder) {
+		File folderFile = new File(newFolder);
+        if (folderFile.isAbsolute() || !Paths.get(newFolder).isAbsolute()) {
+        	this.registrationFolder = newFolder;
+        }
+	}
+	
+	/**
+	 * Setter that will set the running mode to a set number of iterations.
+	 * @param nbIterations the number of iterations that will be run.
+	 */
+	public void setNbIteration(int nbIterations) {
+		this.nbIterations = nbIterations;
+		this.runningChoice = 1;
+	}
+	
+	/**
+	 * Setter that will set the running mode to a set time.
+	 * @param time the time the simulation will have to run (in miliseconds)<br>
+	 */
+	public void setRunningTime(long time) {
+		this.runningTime = time;
+		this.runningChoice = 2;
 	}
 	
 	/***********************************************************************************/
@@ -124,29 +186,42 @@ public abstract class LearningAlgorithm extends Thread {
 	}
 	
 	/**
-	 * Setter to change the saves folder. If the name is incorrect, the folder will not 
-	 * be changed.
-	 * @param newFolder The new folder (and his path) where the saves will be.
-	 */
-	public void setRegistrationFolderName(String newFolder) {
-		File folderFile = new File(newFolder);
-        if (folderFile.isAbsolute() || !Paths.get(newFolder).isAbsolute()) {
-        	this.registrationFolder = newFolder;
-        }
-	}
-	
-	/**
 	 * method that saves the current state of the simulation
 	 */
 	protected abstract void save();
 	
 	/**
-	 * method who takes the learning to the next step
+	 * method who takes the learning to the next iteration
 	 */
 	protected abstract void next();
 	
+	/***********************************************************************************/
+	/*                               running methods                                   */
+	/***********************************************************************************/
+	
 	@Override
 	public void run() {
+		switch (this.runningChoice) {
+		case 1 :
+			this.runXIterations();
+			break;
+		case 2 : 
+			this.runSetTime();
+			break;
+		default :
+			this.runIndefinite();
+			break;
+		}
+		//at the end
+		this.save();
+		System.exit(0);
+	}
+	
+	/**
+	 * method to run the simulation for a indidefinite amount of time. <br>
+	 * the best way to end this is to click the stop button.
+	 */
+	private void runIndefinite() {
 		while (running) {
 			if (pause) {
 				this.save();
@@ -155,16 +230,36 @@ public abstract class LearningAlgorithm extends Thread {
 			}
 			this.next();
 		}
-		//at the end
-		this.save();
 	}
 	
-	//How do I register the intermediary states ?
-
-	//function that run a certain number of iterations ?
+	/**
+	 * Method to run the simulation a set number of times. <br>
+	 * The program will automatically stop after the number of iterations is made.
+	 */
+	private void runXIterations() {
+		for (int i = 0; i < this.nbIterations; i++) {
+			if (pause || !running) {
+				this.save();
+				this.pausing();
+				if (!running) return;
+			}
+			this.next();
+		}
+	}
 	
-	//function that run a certain time ?
-	
-	//How do I take back a simulation from a save ?
-	
+	/**
+	 * Method to run the simulation during a set time. <br>
+	 * The program will automatically stop after the time has passed.
+	 */
+	private void runSetTime() {
+		long beginningTime = System.currentTimeMillis();
+		while (System.currentTimeMillis() - beginningTime < runningTime + timePaused) {
+			if (pause || !running) {
+				this.save();
+				this.pausing();
+				if (!running) return;
+			}
+			this.next();
+		}
+	}
 }
