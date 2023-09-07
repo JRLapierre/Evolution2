@@ -193,6 +193,20 @@ public class LayeredBrain extends Brain {
 		}
 	}
 	
+	protected LayeredBrain(LayeredBrain parent1, LayeredBrain parent2) {
+		//the number of layer does not changes
+		this.nodes = new float[parent1.nodes.length][];
+		this.links = new float[parent1.links.length][][];
+		//mix the structures
+		for (int i = 0; i < this.nodes.length; i++) {//for each layer
+			//we keep the structures of the first one
+			this.nodes[i] = new float[parent1.nodes[i].length];
+		}
+		
+		
+		//mix the links
+	}
+	
 	/***********************************************************************************/
 	/*                       controlled mutation functions                             */
 	/***********************************************************************************/
