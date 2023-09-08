@@ -201,8 +201,27 @@ public class LayeredBrain extends Brain {
 		for (int i = 0; i < this.nodes.length; i++) {//for each layer
 			//we keep the structures of the first one
 			this.nodes[i] = new float[parent1.nodes[i].length];
+			this.links[i] = new float[parent1.links[i].length][];
 		}
-		
+		//the links
+		for (int i = 0; i < this.links.length - 1; i++) {//for each layer
+			for (int j = 0; (j < parent1.links[i].length || j < parent2.links[i].length); j++) {//for each node
+				//mixing the link values
+				for (int k = 0; (k < parent1.links[i+1].length || k < parent2.links[i+1].length); k++) {//for each node
+					this.links[i][j][k] = (parent1.links[i][j][k] + parent2.links[i][j][k]) / 2;
+				}
+				//complete if there is less target nodes
+				if (parent1.links[i+1].length > parent2.links[i].length) {
+					for (int k = parent2.links[i].length-1; k < parent1.links[i+1].length; k++) {
+						this.links[i][j][k] = parent1.links[i][j][k];
+					}
+				}
+
+				//if there is less nodes in the current layer of parent2
+				
+				//if there is less nodes in the next layer of parent2
+			}
+		}
 		
 		//mix the links
 	}
