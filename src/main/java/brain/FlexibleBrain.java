@@ -2,8 +2,10 @@ package brain;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import brain.mutation.MutationAdditionLink;
 import brain.mutation.MutationAdditionNode;
@@ -151,7 +153,7 @@ public class FlexibleBrain extends Brain {
 	
 	/**
 	 * function that allows to find the position of an object in an array.
-	 * @param element the seached object
+	 * @param element the searched object
 	 * @param array the array in witch we search
 	 * @return the position of the object if the object has been found, -1 otherwise.
 	 */
@@ -236,6 +238,34 @@ public class FlexibleBrain extends Brain {
 		}
 	}
 	
+	/**
+	 * Function that allows us to put links in a Map and fuse together those who have the
+	 * same origin and the same target. Half of the factor of the links is kept.
+	 * @param linksMap the Map that will assemble the new links
+	 * @param brain the exterior brain from wich we import the links
+	 */
+	private void fuseLinks(Map<String, Link> linksMap, FlexibleBrain brain) {
+		String localKey;
+		short[] coordinates;
+		Link localLink;
+		Node origin;
+		Node target;
+		for (Link link : brain.links) {
+			coordinates = brain.getLinkCoordinates(link);
+			localKey = coordinates[0] + "" + coordinates[1] 
+					+ "_" + coordinates[2] + "" + coordinates[3];
+			localLink = linksMap.get(localKey);
+			//if a link with the same coordinates exists
+			if (localLink != null) localLink.factor += link.factor/2;
+			//if the link is not already there
+			else {
+	 			origin = decodeNode(coordinates[0], coordinates[1]);
+	 			target = decodeNode(coordinates[2], coordinates[3]);
+				linksMap.put(localKey, new Link(origin, target, link.factor/2));
+			}
+		}
+	}
+	
 	/***********************************************************************************/
 	/*                               constructors                                      */
 	/***********************************************************************************/
@@ -307,6 +337,29 @@ public class FlexibleBrain extends Brain {
 			//add the element to the list
 			this.links.add(new Link(origin, target, originalLink.factor));
 		}
+	}
+	
+	/**
+	 * Constructor to create a FlexibleBrain that mix the characteristics of the parents. <br>
+	 * The links that have the same origin and the same target will be fused together and
+	 * those who are unique to one of the brain will be present with half of their power.
+	 * @param parent1 the first parent
+	 * @param parent2 the second parent
+	 */
+	protected FlexibleBrain(FlexibleBrain parent1, FlexibleBrain parent2) {
+		//input and output length does not change
+		this.inputs = new Node[parent1.inputs.length];
+		for (int i = 0; i < this.inputs.length; i++) this.inputs[i] = new Node();
+		this.outputs = new Node[parent1.outputs.length];
+		for (int i = 0; i < this.outputs.length; i++) this.outputs[i] = new Node();
+		//we take the max number of nodes for the hidden layer
+		this.hidden = new Node[Math.max(parent1.hidden.length, parent2.hidden.length)];
+		for (int i = 0; i < this.hidden.length; i++) this.hidden[i] = new Node();
+		//mixing the links
+		Map<String, Link> linksMap = new HashMap<>();
+		fuseLinks(linksMap, parent1);
+		fuseLinks(linksMap, parent2);
+		this.links = new LinkedList<>(linksMap.values());
 	}
 	
 	/***********************************************************************************/
@@ -422,7 +475,7 @@ public class FlexibleBrain extends Brain {
 
 	@Override
 	public void changeRandomLinkFactor(float minMaxChange) {
-		if (this.links.isEmpty()) return;
+		if (minMaxChange == 0 || this.links.isEmpty()) return;
 		float changement = random.nextFloat(-minMaxChange, minMaxChange);
 		Link link = this.links.get(random.nextInt(this.links.size()));
 		if (traceMutation) {
@@ -471,6 +524,7 @@ public class FlexibleBrain extends Brain {
 
 	@Override
 	public void addRandomLink(float minMaxFactor) {
+		if (minMaxFactor == 0) return;
 		short posOrigin;
 		short posTarget;
 		Node origin;
@@ -483,7 +537,7 @@ public class FlexibleBrain extends Brain {
 		//getting the target node
 		posTarget = (short) random.nextInt(this.outputs.length + this.hidden.length);
 		target = (posTarget >= this.hidden.length) ?
-			this.outputs[posTarget - this.hidden.length] : this.outputs[posTarget];
+			this.outputs[posTarget - this.hidden.length] : this.hidden[posTarget];
 		//creating the new link
 		this.addLink(origin, target, factor);
 	}

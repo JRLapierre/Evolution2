@@ -79,7 +79,7 @@ public abstract class Brain {
 		}
 	}
 	
-	//method to dublicate a brain -------------------------------------------------------
+	//methods of reproduction -----------------------------------------------------------
 	
 	/**
 	 * Create a copy of the current brain.
@@ -90,6 +90,20 @@ public abstract class Brain {
 			return new FlexibleBrain(flexibleBrain);
 		if (this instanceof LayeredBrain layeredBrain)
 			return new LayeredBrain(layeredBrain);
+		return null;
+	}
+	
+	/**
+	 * Create a new brain from the mix of the two brains passed in parameters.
+	 * @param parent1 the first brain
+	 * @param parent2 the second brain
+	 * @return the new combined brain
+	 */
+	public static Brain combine(Brain parent1, Brain parent2) {
+		if (parent1 instanceof FlexibleBrain flexibleBrain)
+			return new FlexibleBrain(flexibleBrain, (FlexibleBrain) parent2);
+		if (parent1 instanceof LayeredBrain layeredBrain)
+			return new LayeredBrain(layeredBrain, (LayeredBrain) parent2);
 		return null;
 	}
 	
