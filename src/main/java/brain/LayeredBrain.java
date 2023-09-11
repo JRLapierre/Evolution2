@@ -193,6 +193,36 @@ public class LayeredBrain extends Brain {
 		}
 	}
 	
+	/**
+	 * Constructor to fuse two brains. <br>
+	 * The new brain will take the neural pattern of parent1.
+	 * @param parent1 the first parent. The new brain will copy this neural pattern.
+	 * @param parent2 the second parent.
+	 */
+	protected LayeredBrain(LayeredBrain parent1, LayeredBrain parent2) {
+		//the number of layer does not changes
+		this.nodes = new float[parent1.nodes.length][];
+		this.links = new float[parent1.links.length][][];
+		//the node arrays
+		for (int i = 0; i < parent1.nodes.length; i++) {
+			this.nodes[i] = new float[parent1.nodes[i].length];
+		}
+		//adapt the values of the links
+		for (int i = 0; i < parent1.links.length; i++) {
+			this.links[i] = new float[parent1.links[i].length][];
+			for (int j = 0; j < parent1.links[i].length; j++) {
+				this.links[i][j] = new float[parent1.links[i][j].length];
+				for (int k = 0; k < parent1.links[i][j].length; k++) {
+					//if parent2.links[i][j] exists and is big enough
+					if (parent2.links[i].length > j && parent2.links[i][j].length > k) {
+						this.links[i][j][k] = (parent1.links[i][j][k] + parent2.links[i][j][k])/2;
+					}
+					else this.links[i][j][k] = parent1.links[i][j][k];
+				}
+			}
+		}
+	}
+	
 	/***********************************************************************************/
 	/*                       controlled mutation functions                             */
 	/***********************************************************************************/
