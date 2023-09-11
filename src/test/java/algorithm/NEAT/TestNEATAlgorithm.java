@@ -31,7 +31,7 @@ class TestNEATAlgorithm {
 	
 	@Test
 	void testRegisterInformations() {
-		ReproductionAlgorithm reproduction = new Elitism(10, 20, 15);
+		ReproductionAlgorithm reproduction = new Elitism(5, 10, 15, 15);
 		Brain brain = new LayeredBrain(1,1,1,1);
 		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, null);
 		//test of the default folder name
@@ -39,7 +39,7 @@ class TestNEATAlgorithm {
 		algo.setRegistrationFolderName("saves/testRelativePath");
 		algo.registerInformations();
 		//test of the absolute path
-		algo.setRegistrationFolderName("C:\\Users\\jrl\\Desktop\\personnel\\code\\java\\Evolution2/saves/testAbsolutePath");
+		//algo.setRegistrationFolderName("C:\\Users\\jrl\\Desktop\\personnel\\code\\java\\Evolution2/saves/testAbsolutePath");
 		algo.registerInformations();
 
 	}
@@ -51,7 +51,7 @@ class TestNEATAlgorithm {
 			deleteFolder(folder);
 		}
 		Individual.setCountId(0);
-		ReproductionAlgorithm reproduction = new Elitism(10, 20, 15);
+		ReproductionAlgorithm reproduction = new Elitism(5, 10, 15, 15);
 		Brain brain = new LayeredBrain(1,1,1,1);
 		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, null);
 		algo.setRegistrationFolderName("saves/testPopulation");
@@ -73,7 +73,7 @@ class TestNEATAlgorithm {
 		if (folder.exists()) {
 			deleteFolder(folder);
 		}
-		ReproductionAlgorithm reproduction = new Elitism(25, 50, 25);
+		ReproductionAlgorithm reproduction = new Elitism(5, 10, 15, 15);
 		Brain.setTraceMutation(false);
 		Brain brain = new LayeredBrain(5,5,5,5);
 		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, null);
@@ -120,7 +120,7 @@ class TestNEATAlgorithm {
 				individual.updateScore(result);
 			}
 		};
-		ReproductionAlgorithm reproduction = new Elitism(25, 50, 25);
+		ReproductionAlgorithm reproduction = new Elitism(5, 10, 15, 15);
 		LayeredBrain.setDefaultLinkValue(0);
 		LayeredBrain.setDefaultLinkVariation(0.5f);
 		Brain brain = new LayeredBrain(1,1,2,2);

@@ -32,7 +32,7 @@ public class Simulation1 {
 	};
 	
 	private static LearningAlgorithm setInitialSimulation() {
-		ReproductionAlgorithm reproduction = new Elitism(5, 10, 10);
+		ReproductionAlgorithm reproduction = new Elitism(5, 10, 15, 15);
 		LayeredBrain.setDefaultLinkValue(0);
 		LayeredBrain.setDefaultLinkVariation(0.5f);
 		Brain brain = new LayeredBrain(1,1,2,2);
