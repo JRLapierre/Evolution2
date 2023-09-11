@@ -15,7 +15,7 @@ class TestReproductionAlgorithm {
 
 	@Test
 	void testMutate() {
-		ReproductionAlgorithm algo = new Elitism(0,0,0);
+		ReproductionAlgorithm algo = new Elitism(0,0,0,0);
 		LayeredBrain.setDefaultLinkValue(1);
 		LayeredBrain.setDefaultLinkVariation(0);
 		Brain b = new LayeredBrain(1,1,1,1);
@@ -79,7 +79,7 @@ class TestReproductionAlgorithm {
 	
 	@Test
 	void testElitism() {
-		ReproductionAlgorithm algo = new Elitism(10, 20, 15);
+		ReproductionAlgorithm algo = new Elitism(5, 10, 15, 15);
 		Individual[] population = new Individual[10];
 		for (int i = 0; i < 10; i++) population[i] = new Individual(new LayeredBrain(0,0,0,0));
 		Individual[] result = algo.reproduce(population);
@@ -96,7 +96,7 @@ class TestReproductionAlgorithm {
 	
 	@Test
 	void testToByte() {
-		ReproductionAlgorithm algo = new Elitism(10, 20, 15);
+		ReproductionAlgorithm algo = new Elitism(5, 10, 15, 15);
 		ByteBuffer bb = ByteBuffer.wrap(algo.toByte());
 		ReproductionAlgorithm copy = ReproductionAlgorithm.restore(bb);
 		byte[] originalArray = algo.toByte();

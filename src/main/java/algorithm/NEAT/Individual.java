@@ -32,6 +32,12 @@ public class Individual {
 	private int parentId;
 	
 	/**
+	 * id of the second parent of the individual. If the individual is a clone, the value
+	 * is set at -1
+	 */
+	private int parent2Id = -1;
+	
+	/**
 	 * brain of the individual
 	 */
 	private Brain brain;
@@ -75,7 +81,6 @@ public class Individual {
 		//generate the ID
 		Individual.countId ++;
 		this.id = Individual.countId;
-	
 	}
 	
 	/**
@@ -91,12 +96,27 @@ public class Individual {
 	}
 	
 	/**
+	 * Constructor to combine two individuals
+	 * @param parent1 the main predecessor of the current individual
+	 * @param parent2 the secondary predecessor of the current individual
+	 */
+	public Individual(Individual parent1, Individual parent2) {
+		this.parentId = parent1.id;
+		this.parent2Id = parent2.id;
+		this.brain = Brain.combine(parent1.brain, parent2.brain);
+		//generate the ID
+		Individual.countId ++;
+		this.id = Individual.countId;
+	}
+	
+	/**
 	 * Constructor from a save
 	 * @param bb the ByteBuffer containing the informations
 	 */
 	public Individual(ByteBuffer bb) {
 		this.id = bb.getInt();
 		this.parentId = bb.getInt();
+		this.parent2Id = bb.getInt();
 		this.brain = Brain.restore(bb);
 	}
 	
@@ -121,6 +141,15 @@ public class Individual {
 	}
 	
 	/**
+	 * getter for the id of the second parent of the individual.
+	 * @return the id of the second parent of the individual if the individual has two 
+	 * parents, -1 otherwise.
+	 */
+	public int getParent2Id() {
+		return this.parent2Id;
+	}
+	
+	/**
 	 * getter for a safe access to the brain.
 	 * @return the brain
 	 */
@@ -137,7 +166,7 @@ public class Individual {
 	}
 	
 	/**
-	 * function that allows us to update the score of an individual easyly.
+	 * function that allows us to update the score of an individual easily.
 	 * @param update the changement of score
 	 */
 	public void updateScore(float update) {
@@ -149,14 +178,16 @@ public class Individual {
 	 * the returning array contains : <br>
 	 * 4 bytes for the id; <br>
 	 * 4 bytes for the id of the parent; <br>
+	 * 4 bytes for the id of the second parent; <br>
 	 * the rest for the brain.
 	 * @return a byte array containing the binary code
 	 */
 	public byte[] toByte() {
 		byte[] bytesBrain = this.brain.toBytes();
-		ByteBuffer bb = ByteBuffer.allocate(8 + bytesBrain.length);
+		ByteBuffer bb = ByteBuffer.allocate(12 + bytesBrain.length);
 		bb.putInt(id);
 		bb.putInt(parentId);
+		bb.putInt(parent2Id);
 		bb.put(bytesBrain);
 		return bb.array();
 		
