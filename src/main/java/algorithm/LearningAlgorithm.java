@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import algorithm.NEAT.NEATAlgorithm;
+import algorithm.running_choice.*;
 
 /**
  * This class is the root for all learning algorithm. It manages the display and 
@@ -33,23 +34,9 @@ public abstract class LearningAlgorithm extends Thread {
 	// control parameters ---------------------------------------------------------------
 	
 	/**
-	 * the choice of the way the simulation will run. <br>
-	 * 0 is for a simulation with no predetermined end.<br>
-	 * 1 is for a simulation who will stop after a set number of iterations<br>
-	 * 2 is for a simulation who will stop after a set time<br>
+	 * the way to run the simulation.
 	 */
-	private byte runningChoice = 0;
-	
-	/**
-	 * the number of iterations of the learning algorithm if we want a fixed number of 
-	 * iterations.
-	 */
-	private int nbIterations;
-	
-	/**
-	 * The maximum time (in miliseconds) for the simulation to run. <br>
-	 */
-	private long runningTime;
+	private RunningChoice runningChoice = new DefaultRunning();
 	
 	/**
 	 * the time passed in pause.
@@ -142,8 +129,7 @@ public abstract class LearningAlgorithm extends Thread {
 	 * @param nbIterations the number of iterations that will be run.
 	 */
 	public void setNbIteration(int nbIterations) {
-		this.nbIterations = nbIterations;
-		this.runningChoice = 1;
+		this.runningChoice = new RunningIteration(nbIterations);
 	}
 	
 	/**
@@ -151,8 +137,7 @@ public abstract class LearningAlgorithm extends Thread {
 	 * @param time the time the simulation will have to run (in milliseconds)<br>
 	 */
 	public void setRunningTime(long time) {
-		this.runningTime = time;
-		this.runningChoice = 2;
+		this.runningChoice = new RunningTime(this, time);
 	}
 	
 	/***********************************************************************************/
@@ -214,54 +199,20 @@ public abstract class LearningAlgorithm extends Thread {
 	
 	@Override
 	public void run() {
-		switch (this.runningChoice) {
-		case 1 :
-			this.runXIterations();
-			break;
-		case 2 : 
-			this.runSetTime();
-			break;
-		default :
-			this.runIndefinite();
-			break;
+		while (this.runningChoice.runningCondition()) {
+			if (managePauseStop()) return;
+			this.next();
 		}
 		//at the end
 		this.save();
 		System.exit(0);
 	}
 	
-	/**
-	 * method to run the simulation for a indefinite amount of time. <br>
-	 * the best way to end this is to click the stop button.
-	 */
-	private void runIndefinite() {
-		while (true) {
-			if (managePauseStop()) return;
-			this.next();
-		}
-	}
 	
-	/**
-	 * Method to run the simulation a set number of times. <br>
-	 * The program will automatically stop after the number of iterations is made.
-	 */
-	private void runXIterations() {
-		for (int i = 0; i < this.nbIterations; i++) {
-			if (managePauseStop()) return;
-			this.next();
-		}
-	}
+	//TODO fit somewere
 	
-	/**
-	 * Method to run the simulation during a set time. <br>
-	 * The program will automatically stop after the time has passed.
-	 */
-	private void runSetTime() {
-		long beginningTime = System.currentTimeMillis();
-		while (System.currentTimeMillis() - beginningTime < runningTime + timePaused) {
-			if (managePauseStop()) return;
-			this.next();
-		}
+	public long getTimePaused() {
+		return this.timePaused;
 	}
 }
 
