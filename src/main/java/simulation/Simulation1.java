@@ -51,7 +51,7 @@ public class Simulation1 {
 	
 	public static void main(String[] args) {
 		LearningAlgorithm algo = setInitialSimulation();
-		//algo.setRunningTime(10000);
+		algo.setRunningTime(10000);
 		new Controller(algo);
 	}
 	
