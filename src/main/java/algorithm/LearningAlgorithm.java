@@ -21,7 +21,7 @@ public abstract class LearningAlgorithm extends Thread {
 	/***********************************************************************************/
 	
 	/**
-	 * Instance of a functionnal interface to evaluate the population
+	 * Instance of a functional interface to evaluate the population
 	 */
 	protected Evaluation evaluation;
 	
@@ -106,7 +106,7 @@ public abstract class LearningAlgorithm extends Thread {
     }
     
     /**
-     * method that keep waiting as long as the simuation is paused.
+     * method that keep waiting as long as the simulation is paused.
      */
 	private synchronized void pausing() {
 		long startPause = System.currentTimeMillis();
@@ -148,7 +148,7 @@ public abstract class LearningAlgorithm extends Thread {
 	
 	/**
 	 * Setter that will set the running mode to a set time.
-	 * @param time the time the simulation will have to run (in miliseconds)<br>
+	 * @param time the time the simulation will have to run (in milliseconds)<br>
 	 */
 	public void setRunningTime(long time) {
 		this.runningTime = time;
@@ -163,7 +163,7 @@ public abstract class LearningAlgorithm extends Thread {
 	 * method to restore a learning algorithm from a save
 	 * @param folder the folder containing the save
 	 * @param evaluation the lambda expression
-	 * @return the learninig algorithm
+	 * @return the learning algorithm
 	 */
 	public static LearningAlgorithm restore(String folder, Evaluation evaluation) {
 		byte[] settingsFile;
@@ -199,6 +199,19 @@ public abstract class LearningAlgorithm extends Thread {
 	/*                               running methods                                   */
 	/***********************************************************************************/
 	
+	/**
+	 * method to manage the pause and the stopping of the simulations. <br>
+	 * @return true if the stop command has been given, false otherwise.
+	 */
+	private boolean managePauseStop() {
+		if (pause || !running) {
+			this.save();
+			this.pausing();
+			if (!running) return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void run() {
 		switch (this.runningChoice) {
@@ -218,16 +231,12 @@ public abstract class LearningAlgorithm extends Thread {
 	}
 	
 	/**
-	 * method to run the simulation for a indidefinite amount of time. <br>
+	 * method to run the simulation for a indefinite amount of time. <br>
 	 * the best way to end this is to click the stop button.
 	 */
 	private void runIndefinite() {
-		while (running) {
-			if (pause) {
-				this.save();
-				this.pausing();
-				if (!running) return;
-			}
+		while (true) {
+			if (managePauseStop()) return;
 			this.next();
 		}
 	}
@@ -238,11 +247,7 @@ public abstract class LearningAlgorithm extends Thread {
 	 */
 	private void runXIterations() {
 		for (int i = 0; i < this.nbIterations; i++) {
-			if (pause || !running) {
-				this.save();
-				this.pausing();
-				if (!running) return;
-			}
+			if (managePauseStop()) return;
 			this.next();
 		}
 	}
@@ -254,12 +259,10 @@ public abstract class LearningAlgorithm extends Thread {
 	private void runSetTime() {
 		long beginningTime = System.currentTimeMillis();
 		while (System.currentTimeMillis() - beginningTime < runningTime + timePaused) {
-			if (pause || !running) {
-				this.save();
-				this.pausing();
-				if (!running) return;
-			}
+			if (managePauseStop()) return;
 			this.next();
 		}
 	}
 }
+
+
