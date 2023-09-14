@@ -7,6 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import algorithm.NEAT.NEATAlgorithm;
+import algorithm.autosave.AutosaveCondition;
+import algorithm.autosave.NoAutoSave;
+import algorithm.autosave.SaveIteration;
+import algorithm.autosave.SaveTime;
 import algorithm.running_choice.*;
 
 /**
@@ -37,6 +41,11 @@ public abstract class LearningAlgorithm extends Thread {
 	 * the way to run the simulation.
 	 */
 	private RunningChoice runningChoice = new DefaultRunning();
+	
+	/**
+	 * the condition for automatically saving the simulation.
+	 */
+	private AutosaveCondition autosaveCondition = new NoAutoSave();
 	
 	/**
 	 * the time passed in pause.
@@ -108,6 +117,14 @@ public abstract class LearningAlgorithm extends Thread {
         this.timePaused += System.currentTimeMillis() - startPause;
 	}
 	
+	/**
+	 * getter for the time passed in pause.
+	 * @return the time passed in pause
+	 */
+	public long getTimePaused() {
+		return this.timePaused;
+	}
+	
 	/***********************************************************************************/
 	/*                                    setters                                      */
 	/***********************************************************************************/
@@ -138,6 +155,22 @@ public abstract class LearningAlgorithm extends Thread {
 	 */
 	public void setRunningTime(long time) {
 		this.runningChoice = new RunningTime(this, time);
+	}
+	
+	/**
+	 * Setter that will set the simulation to automatically save every x iterations
+	 * @param nbIterations the number of iterations necessary between saves
+	 */
+	public void setAutosaveIterations(int nbIterations) {
+		this.autosaveCondition = new SaveIteration(nbIterations);
+	}
+	
+	/**
+	 * Setter that will set the simulation to automatically save every x milliseconds
+	 * @param time the time between the autosaves
+	 */
+	public void setAutosaveTime(long time) {
+		this.autosaveCondition = new SaveTime(time);
 	}
 	
 	/***********************************************************************************/
@@ -201,6 +234,7 @@ public abstract class LearningAlgorithm extends Thread {
 	public void run() {
 		while (this.runningChoice.runningCondition()) {
 			if (managePauseStop()) return;
+			if (autosaveCondition.saveCondition()) this.save();
 			this.next();
 		}
 		//at the end
@@ -209,11 +243,6 @@ public abstract class LearningAlgorithm extends Thread {
 	}
 	
 	
-	//TODO fit somewere
-	
-	public long getTimePaused() {
-		return this.timePaused;
-	}
 }
 
 
