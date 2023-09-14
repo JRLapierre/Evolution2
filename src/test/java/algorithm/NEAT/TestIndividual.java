@@ -47,7 +47,6 @@ class TestIndividual {
 	@Test
 	void testIndividualCombinaison() {
 		Individual.setCountId(0);
-		Individual.setCountId(0);
 		LayeredBrain.setDefaultLinkValue(0);
 		LayeredBrain.setDefaultLinkVariation(2);
 		Brain brain = new LayeredBrain(1,1,1,1);

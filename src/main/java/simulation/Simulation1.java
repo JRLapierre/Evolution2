@@ -41,7 +41,6 @@ public class Simulation1 {
 		reproduction.setAddNode(5);
 		reproduction.setChangeLinkFactor(5, 0.5f);
 		reproduction.setDeleteNode(5);
-		algo.setRunningTime(10000);
 		return algo;
 	}
 	
@@ -52,6 +51,8 @@ public class Simulation1 {
 	
 	public static void main(String[] args) {
 		LearningAlgorithm algo = setInitialSimulation();
+		algo.setRunningTime(10000);
+		algo.setAutosaveTime(1000);
 		new Controller(algo);
 	}
 	

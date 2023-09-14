@@ -7,6 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import algorithm.NEAT.NEATAlgorithm;
+import algorithm.autosave.AutosaveCondition;
+import algorithm.autosave.NoAutoSave;
+import algorithm.autosave.SaveIteration;
+import algorithm.autosave.SaveTime;
+import algorithm.running_choice.*;
 
 /**
  * This class is the root for all learning algorithm. It manages the display and 
@@ -21,7 +26,7 @@ public abstract class LearningAlgorithm extends Thread {
 	/***********************************************************************************/
 	
 	/**
-	 * Instance of a functionnal interface to evaluate the population
+	 * Instance of a functional interface to evaluate the population
 	 */
 	protected Evaluation evaluation;
 	
@@ -33,23 +38,14 @@ public abstract class LearningAlgorithm extends Thread {
 	// control parameters ---------------------------------------------------------------
 	
 	/**
-	 * the choice of the way the simulation will run. <br>
-	 * 0 is for a simulation with no predetermined end.<br>
-	 * 1 is for a simulation who will stop after a set number of iterations<br>
-	 * 2 is for a simulation who will stop after a set time<br>
+	 * the way to run the simulation.
 	 */
-	private byte runningChoice = 0;
+	private RunningChoice runningChoice = new DefaultRunning();
 	
 	/**
-	 * the number of iterations of the learning algorithm if we want a fixed number of 
-	 * iterations.
+	 * the condition for automatically saving the simulation.
 	 */
-	private int nbIterations;
-	
-	/**
-	 * The maximum time (in miliseconds) for the simulation to run. <br>
-	 */
-	private long runningTime;
+	private AutosaveCondition autosaveCondition = new NoAutoSave();
 	
 	/**
 	 * the time passed in pause.
@@ -106,7 +102,7 @@ public abstract class LearningAlgorithm extends Thread {
     }
     
     /**
-     * method that keep waiting as long as the simuation is paused.
+     * method that keep waiting as long as the simulation is paused.
      */
 	private synchronized void pausing() {
 		long startPause = System.currentTimeMillis();
@@ -119,6 +115,14 @@ public abstract class LearningAlgorithm extends Thread {
 			}
         }
         this.timePaused += System.currentTimeMillis() - startPause;
+	}
+	
+	/**
+	 * getter for the time passed in pause.
+	 * @return the time passed in pause
+	 */
+	public long getTimePaused() {
+		return this.timePaused;
 	}
 	
 	/***********************************************************************************/
@@ -142,17 +146,31 @@ public abstract class LearningAlgorithm extends Thread {
 	 * @param nbIterations the number of iterations that will be run.
 	 */
 	public void setNbIteration(int nbIterations) {
-		this.nbIterations = nbIterations;
-		this.runningChoice = 1;
+		this.runningChoice = new RunningIteration(nbIterations);
 	}
 	
 	/**
 	 * Setter that will set the running mode to a set time.
-	 * @param time the time the simulation will have to run (in miliseconds)<br>
+	 * @param time the time the simulation will have to run (in milliseconds)<br>
 	 */
 	public void setRunningTime(long time) {
-		this.runningTime = time;
-		this.runningChoice = 2;
+		this.runningChoice = new RunningTime(this, time);
+	}
+	
+	/**
+	 * Setter that will set the simulation to automatically save every x iterations
+	 * @param nbIterations the number of iterations necessary between saves
+	 */
+	public void setAutosaveIterations(int nbIterations) {
+		this.autosaveCondition = new SaveIteration(nbIterations);
+	}
+	
+	/**
+	 * Setter that will set the simulation to automatically save every x milliseconds
+	 * @param time the time between the autosaves
+	 */
+	public void setAutosaveTime(long time) {
+		this.autosaveCondition = new SaveTime(time);
 	}
 	
 	/***********************************************************************************/
@@ -163,7 +181,7 @@ public abstract class LearningAlgorithm extends Thread {
 	 * method to restore a learning algorithm from a save
 	 * @param folder the folder containing the save
 	 * @param evaluation the lambda expression
-	 * @return the learninig algorithm
+	 * @return the learning algorithm
 	 */
 	public static LearningAlgorithm restore(String folder, Evaluation evaluation) {
 		byte[] settingsFile;
@@ -199,67 +217,32 @@ public abstract class LearningAlgorithm extends Thread {
 	/*                               running methods                                   */
 	/***********************************************************************************/
 	
+	/**
+	 * method to manage the pause and the stopping of the simulations. <br>
+	 * @return true if the stop command has been given, false otherwise.
+	 */
+	private boolean managePauseStop() {
+		if (pause || !running) {
+			this.save();
+			this.pausing();
+			if (!running) return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void run() {
-		switch (this.runningChoice) {
-		case 1 :
-			this.runXIterations();
-			break;
-		case 2 : 
-			this.runSetTime();
-			break;
-		default :
-			this.runIndefinite();
-			break;
+		while (this.runningChoice.runningCondition()) {
+			if (managePauseStop()) return;
+			if (autosaveCondition.saveCondition()) this.save();
+			this.next();
 		}
 		//at the end
 		this.save();
 		System.exit(0);
 	}
 	
-	/**
-	 * method to run the simulation for a indidefinite amount of time. <br>
-	 * the best way to end this is to click the stop button.
-	 */
-	private void runIndefinite() {
-		while (running) {
-			if (pause) {
-				this.save();
-				this.pausing();
-				if (!running) return;
-			}
-			this.next();
-		}
-	}
 	
-	/**
-	 * Method to run the simulation a set number of times. <br>
-	 * The program will automatically stop after the number of iterations is made.
-	 */
-	private void runXIterations() {
-		for (int i = 0; i < this.nbIterations; i++) {
-			if (pause || !running) {
-				this.save();
-				this.pausing();
-				if (!running) return;
-			}
-			this.next();
-		}
-	}
-	
-	/**
-	 * Method to run the simulation during a set time. <br>
-	 * The program will automatically stop after the time has passed.
-	 */
-	private void runSetTime() {
-		long beginningTime = System.currentTimeMillis();
-		while (System.currentTimeMillis() - beginningTime < runningTime + timePaused) {
-			if (pause || !running) {
-				this.save();
-				this.pausing();
-				if (!running) return;
-			}
-			this.next();
-		}
-	}
 }
+
+

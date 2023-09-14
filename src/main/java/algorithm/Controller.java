@@ -9,7 +9,7 @@ import javax.swing.JTextArea;
 
 /**
  * This class allow us to display information about our simulation and control the pause 
- * and the stopping of the programm.
+ * and the stopping of the program.
  * @author jrl
  *
  */
@@ -25,12 +25,12 @@ public class Controller {
 	private JFrame window = new JFrame();
 	
 	/**
-	 * the global pannel containing the elements vertically
+	 * the global panel containing the elements vertically
 	 */
 	private JPanel mainPanel = new JPanel();
 	
 	/**
-	 * pannel that display the buttons horisontally
+	 * Panel that display the buttons horizontally
 	 */
 	private JPanel buttonsPanel = new JPanel();
 	
@@ -45,7 +45,7 @@ public class Controller {
 	private JButton stop = new JButton("stop");
 	
     /**
-     * The button that allows us to pause and resume the programm
+     * The button that allows us to pause and resume the program
      */
 	private JButton playPause = new JButton("play/pause");
 	
@@ -59,12 +59,12 @@ public class Controller {
 	/***********************************************************************************/
 	
 	/**
-	 * The learining algorithm
+	 * The learning algorithm
 	 */
 	private LearningAlgorithm algorithm;
 	
 	/***********************************************************************************/
-	/*                           Initialisation methods                                */
+	/*                           Initialization methods                                */
 	/***********************************************************************************/
 	
 	private void initPannels() {
