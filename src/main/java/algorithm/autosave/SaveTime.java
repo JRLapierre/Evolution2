@@ -28,7 +28,7 @@ public class SaveTime implements AutosaveCondition {
 	@Override
 	public boolean saveCondition() {
 		boolean result = lastSaveTime + saveTime < System.currentTimeMillis();
-		lastSaveTime = System.currentTimeMillis();
+		if (result) lastSaveTime = System.currentTimeMillis();
 		return result;
 	}
 
