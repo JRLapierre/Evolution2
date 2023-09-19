@@ -164,6 +164,10 @@ public abstract class ReproductionAlgorithm {
 			algo = new Elitism(bb);
 			algo.restoreMutations(bb);
 			return algo;
+		case (2): //roulette selection
+			algo = new RouletteSelection(bb);
+			algo.restoreMutations(bb);
+			return algo;
 		default:
 			return null;
 		}

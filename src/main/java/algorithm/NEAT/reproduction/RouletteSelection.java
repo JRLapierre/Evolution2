@@ -95,10 +95,12 @@ public class RouletteSelection extends ReproductionAlgorithm {
 	public Individual[] reproduce(Individual[] population) {
 		Arrays.sort(population, Comparator.comparingDouble(Individual::getScore).reversed());
 		Individual[] newPopulation = new Individual[this.nbPerfectClones + this.nbMutatedClones + this.nbCombinedChildren];
-		//calculate the score of the allowed ones
+		//ajust the score to only have positive scores (the lowest score will become 1)
+		float changeScore = population[population.length-1].getScore() * (-1) + 1;
+		for (Individual individual : population) individual.updateScore(changeScore);
+		//calculate the sum of the scores of the allowed ones
 		float sumScore = 0;
-		for (int i = 0; i < population.length; i++) {
-			if (i > this.limit) break;
+		for (int i = 0; i < population.length && i != this.limit; i++) {
 			sumScore += population[i].getScore();
 		}
 		//perfect clones
