@@ -1,14 +1,18 @@
 <h1> Evolution2 </h1>
 
-Version 1.3
+Version 1.4
 
 this is my second neural network project. In this project, I want to make a structure that is more optimized and open to new features than the last. <br>
 
-I made two models of neral network (see package brain), one learning algorithm and one selection algorithm. I plan to do more.
+I made two models of neral network (see package brain), one learning algorithm and two selection algorithm. I plan to do more.
 
 I just do that for fun, so feel free to use this however you like.
 
 <h2> version history </h2>
+
+<h4> 1.4 </h4>
+
+addition of a new selection algorithm : the roulette weel selection algorithm. This algorithm uses a bit of random, but still favors the bests.
 
 <h4> 1.3 </h4>
 
