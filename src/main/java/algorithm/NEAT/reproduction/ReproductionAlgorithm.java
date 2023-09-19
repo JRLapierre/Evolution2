@@ -20,7 +20,7 @@ public abstract class ReproductionAlgorithm {
 	/**
 	 * generator of random numbers
 	 */
-	private Random random = new Random();
+	protected Random random = new Random();
 	
 	/**
 	 * a value to choose if we do the changeRandomLinkFactor mutation or not. 
@@ -164,6 +164,10 @@ public abstract class ReproductionAlgorithm {
 			algo = new Elitism(bb);
 			algo.restoreMutations(bb);
 			return algo;
+		case (2): //roulette selection
+			algo = new RouletteSelection(bb);
+			algo.restoreMutations(bb);
+			return algo;
 		default:
 			return null;
 		}
@@ -225,6 +229,14 @@ public abstract class ReproductionAlgorithm {
 	 * For Elitism : <br>
 	 * length of the data : 45 <br>
 	 * 1 : kind of algorithm (always 1) <br>
+	 * 4 : number of perfect clones <br>
+	 * 4 : number of mutated clones <br>
+	 * 4 : limit of rank for the reproduction <br>
+	 * 32 : toByteMutations <br>
+	 * <br>
+	 * For RouletteSelection : <br>
+	 * length of the data : 45 <br>
+	 * 1 : kind of algorithm (always 2) <br>
 	 * 4 : number of perfect clones <br>
 	 * 4 : number of mutated clones <br>
 	 * 4 : limit of rank for the reproduction <br>
