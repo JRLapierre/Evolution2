@@ -447,5 +447,13 @@ class TestBrain {
 		Brain b13 = Brain.combine(b7, b11);
 		assertEquals((b7.compute(input)[0] + b11.compute(input)[0])/2 , b13.compute(input)[0]);
 	}
+	
+	@Test
+	void testBigBrain() {
+		LayeredBrain.setDefaultLinkValue(1);
+		LayeredBrain.setDefaultLinkVariation(0);
+		LayeredBrain brain = new LayeredBrain(1, 1, 2, 20);
+		assertEquals(400, brain.compute(new float[] {1})[0]);
+	}
 
 }

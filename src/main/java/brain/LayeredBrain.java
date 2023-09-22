@@ -2,6 +2,8 @@ package brain;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import brain.mutation.MutationAdditionNode;
 import brain.mutation.MutationDeletionNode;
@@ -18,6 +20,44 @@ import brain.mutation.MutationLinkFactor;
  *
  */
 public class LayeredBrain extends Brain {
+	
+	/***********************************************************************************/
+	/*                           integrated classes                                    */
+	/***********************************************************************************/
+	
+	private class TransmitSignal implements Runnable {
+		
+		private float originNumber;
+		private float[] linksArray;
+		private float[] targetArray;
+		private int startIndex;
+		private int endIndex;
+
+		/**
+		 * @param originNumber
+		 * @param linksArray
+		 * @param targetArray
+		 * @param startIndex
+		 * @param endIndex
+		 */
+		public TransmitSignal(float originNumber, float[] linksArray, float[] targetArray, int startIndex, int endIndex) {
+			this.originNumber = originNumber;
+			this.linksArray = linksArray;
+			this.targetArray = targetArray;
+			this.startIndex = startIndex;
+			this.endIndex = endIndex;
+		}
+
+		@Override
+		public void run() {
+			if (endIndex > this.targetArray.length) return;
+			for (int i = startIndex; i < endIndex; i++) {
+				this.targetArray[i] += originNumber * this.linksArray[i];
+			}
+			
+		}
+		
+	}
 	
 	/***********************************************************************************/
 	/*                                variables                                        */
@@ -352,27 +392,37 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public float[] compute(float[] inputs) {
+		//get the number of availeble cores for multhireading
+		int nbThreads = Runtime.getRuntime().availableProcessors();
 		//getting the inputs
 		this.nodes[0] = Arrays.copyOf(inputs, inputs.length);
 		//transmitting in the layers
 		for (int i = 0; i < this.links.length; i++) { //for each layer
-			//transmitting the signals to the other layers
-			for (int j = 0; j < this.links[i].length; j++) {//for each source node
-				for (int k = 0; k < this.links[i][j].length; k++) {//for each target node
-					//take the value from the source and transmitting it to the target
-					this.nodes[i+1][k] += this.nodes[i][j] * this.links[i][j][k];
+			//calculating how to dispatch between the threads
+			if (this.links[i].length != 0) {
+				int chunkSize = (this.links[i][0].length / nbThreads) + 1;
+				int nbIterations = (this.links[i][0].length < nbThreads) ? this.links[i][0].length : nbThreads;
+				//transmitting the signals to the other layers
+				for (int j = 0; j < this.links[i].length; j++) {//for each source node
+					//transmitting the signal through multiple threads
+			        ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+					for (int k = 0; k < nbIterations; k++) {
+						int startIndex = k * chunkSize;
+						int endIndex = startIndex + chunkSize;
+		            	executor.execute(new TransmitSignal(this.nodes[i][j], this.links[i][j], this.nodes[i+1], startIndex, endIndex));
+					}
+			        executor.shutdown();
+			        while (!executor.isTerminated()) {}
 				}
 			}
+
 		}
+
 		//copiing the results
 		float[] results = Arrays.copyOf(this.nodes[this.nodes.length - 1], 
 				this.nodes[this.nodes.length - 1].length);
 		//resetting the nodes
-		for (int i = 0; i < this.nodes.length; i++) {
-			for (int j = 0; j < this.nodes[i].length; j++) {
-				this.nodes[i][j] = 0;
-			}
-		}
+		for (float[] row : this.nodes) Arrays.fill(row, 0);
 		return results;
 	}
 
