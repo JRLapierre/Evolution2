@@ -25,22 +25,49 @@ public class LayeredBrain extends Brain {
 	/*                           integrated classes                                    */
 	/***********************************************************************************/
 	
+	/**
+	 * Integrated class used to transmit a signal from a layer to an other using multiple
+	 * threads.
+	 * @author jrl
+	 *
+	 */
 	private class TransmitSignal implements Runnable {
 		
+		/**
+		 * the value stored in the origin node
+		 */
 		private float originNumber;
+		
+		/**
+		 * the array of links to transmit
+		 */
 		private float[] linksArray;
+		
+		/**
+		 * the array of nodes to store the new values
+		 */
 		private float[] targetArray;
+		
+		/**
+		 * the index of the beginning of the area of action of this object
+		 */
 		private int startIndex;
+		
+		/**
+		 * the end index of the area of action of this object
+		 */
 		private int endIndex;
 
 		/**
-		 * @param originNumber
-		 * @param linksArray
-		 * @param targetArray
-		 * @param startIndex
-		 * @param endIndex
+		 * the constructor to manage a part of the signal transmission
+		 * @param originNumber the value stored in the origin node
+		 * @param linksArray the array of links to transmit
+		 * @param targetArray the array of links to transmit
+		 * @param startIndex the index of the beginning of the area of action of this object
+		 * @param endIndex the end index of the area of action of this object
 		 */
-		public TransmitSignal(float originNumber, float[] linksArray, float[] targetArray, int startIndex, int endIndex) {
+		public TransmitSignal(float originNumber, float[] linksArray, 
+				float[] targetArray, int startIndex, int endIndex) {
 			this.originNumber = originNumber;
 			this.linksArray = linksArray;
 			this.targetArray = targetArray;
@@ -50,11 +77,10 @@ public class LayeredBrain extends Brain {
 
 		@Override
 		public void run() {
-			if (endIndex > this.targetArray.length) return;
+			if (endIndex > this.targetArray.length) endIndex = this.targetArray.length;
 			for (int i = startIndex; i < endIndex; i++) {
 				this.targetArray[i] += originNumber * this.linksArray[i];
 			}
-			
 		}
 		
 	}
@@ -139,6 +165,33 @@ public class LayeredBrain extends Brain {
 		    if (i != position) newArray[j++] = array[i];
 		}
 		return newArray;
+	}
+
+	/**
+	 * Private function to transmit the signal from one layer to the other.
+	 * @param sourceLayer the index of the source layer
+	 */
+	private void transmitNextLayer(int sourceLayer) {
+		//getting keys values
+		int nbThreads = Runtime.getRuntime().availableProcessors();
+		int chunkSize = (this.links[sourceLayer][0].length / nbThreads) + 1;
+		int nbIterations = (this.links[sourceLayer][0].length < nbThreads)
+				? this.links[sourceLayer][0].length : nbThreads;
+		for (int j = 0; j < this.links[sourceLayer].length; j++) {//for each source node
+			//transmitting the signal through multiple threads
+	        ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+			for (int k = 0; k < nbIterations; k++) {
+				int startIndex = k * chunkSize;
+				int endIndex = startIndex + chunkSize;
+            	executor.execute(new TransmitSignal(
+            			this.nodes[sourceLayer][j], 
+            			this.links[sourceLayer][j], 
+            			this.nodes[sourceLayer + 1], 
+            			startIndex, endIndex));
+			}
+	        executor.shutdown();
+	        while (!executor.isTerminated()) {/*wait for the operation to finish*/}
+		}
 	}
 	
 	/***********************************************************************************/
@@ -389,35 +442,15 @@ public class LayeredBrain extends Brain {
 	/***********************************************************************************/
 	/* 							     other functions                                   */
 	/***********************************************************************************/
-
+	
 	@Override
 	public float[] compute(float[] inputs) {
-		//get the number of availeble cores for multhireading
-		int nbThreads = Runtime.getRuntime().availableProcessors();
 		//getting the inputs
 		this.nodes[0] = Arrays.copyOf(inputs, inputs.length);
 		//transmitting in the layers
 		for (int i = 0; i < this.links.length; i++) { //for each layer
-			//calculating how to dispatch between the threads
-			if (this.links[i].length != 0) {
-				int chunkSize = (this.links[i][0].length / nbThreads) + 1;
-				int nbIterations = (this.links[i][0].length < nbThreads) ? this.links[i][0].length : nbThreads;
-				//transmitting the signals to the other layers
-				for (int j = 0; j < this.links[i].length; j++) {//for each source node
-					//transmitting the signal through multiple threads
-			        ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
-					for (int k = 0; k < nbIterations; k++) {
-						int startIndex = k * chunkSize;
-						int endIndex = startIndex + chunkSize;
-		            	executor.execute(new TransmitSignal(this.nodes[i][j], this.links[i][j], this.nodes[i+1], startIndex, endIndex));
-					}
-			        executor.shutdown();
-			        while (!executor.isTerminated()) {}
-				}
-			}
-
+			if (this.links[i].length != 0) transmitNextLayer(i);
 		}
-
 		//copiing the results
 		float[] results = Arrays.copyOf(this.nodes[this.nodes.length - 1], 
 				this.nodes[this.nodes.length - 1].length);
