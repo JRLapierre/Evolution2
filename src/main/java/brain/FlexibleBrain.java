@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import brain.mutation.MutationAdditionLink;
 import brain.mutation.MutationAdditionNode;
@@ -38,6 +40,10 @@ public class FlexibleBrain extends Brain {
 		 * this is the value contained in the node
 		 */
 		protected float value = 0f;
+		
+		public synchronized void resetValue() {
+			this.value = 0f;
+		}
 	}
 	
 	/**
@@ -97,6 +103,49 @@ public class FlexibleBrain extends Brain {
 			this.target.value += this.value;
 			this.value = 0;
 		}
+	}
+	
+	/**
+	 * This class allow us to reset the values of the node arrays using multiple threads.
+	 * @author jrl
+	 *
+	 */
+	private class ResetNodes implements Runnable {
+		
+		/**
+		 * The array to reset
+		 */
+		private Node[] nodeArray;
+		
+		/**
+		 * The start index of the area of action
+		 */
+		private int startIndex;
+		
+		/**
+		 * the end index of the area of action
+		 */
+		private int endIndex;
+
+		/**
+		 * @param nodeArray The array to reset
+		 * @param startIndex The start index of the area of action
+		 * @param endIndex the end index of the area of action
+		 */
+		public ResetNodes(Node[] nodeArray, int startIndex, int endIndex) {
+			this.nodeArray = nodeArray;
+			this.startIndex = startIndex;
+			this.endIndex = (endIndex < nodeArray.length) ? endIndex : nodeArray.length;
+		}
+
+		@Override
+		public void run() {
+			for (int i = startIndex; i < endIndex; i++) {
+				nodeArray[i].resetValue();
+			}
+			
+		}
+		
 	}
 	
 	/***********************************************************************************/
@@ -572,7 +621,7 @@ public class FlexibleBrain extends Brain {
 			//taking the signal inside the links
 			for (Link link : this.links) link.takeSignal();
 			//resetting the value in the hidden nodes
-			for (int j = 0 ; j < this.hidden.length; j++) this.hidden[j].value = 0f;
+			this.resetNodeArray(this.hidden);
 			//sending the signal in the next node
 			for (Link link : this.links) link.sendSignal();
 		}
@@ -580,9 +629,23 @@ public class FlexibleBrain extends Brain {
 		float[] outputsCopy = new float[this.outputs.length];
 		for (int i = 0 ; i < this.outputs.length; i++) outputsCopy[i] = this.outputs[i].value;
 		//resetting the outputs and the hidden nodes
-		for (int i = 0 ; i < this.hidden.length; i++) this.hidden[i].value = 0f;
-		for (int i = 0 ; i < this.outputs.length; i++) this.outputs[i].value = 0f;
+		this.resetNodeArray(this.hidden);
+		this.resetNodeArray(this.outputs);
 		return outputsCopy;
+	}
+	
+	private void resetNodeArray(Node[] nodeArray) {
+		int nbThreads = Runtime.getRuntime().availableProcessors();
+		int chunkSize = (nodeArray.length / nbThreads) + 1;
+		int nbIterations = (nodeArray.length < nbThreads) ? nodeArray.length : nbThreads;
+        ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+		for (int i = 0; i < nbIterations; i++) {
+			int startIndex = i * chunkSize;
+			int endIndex = startIndex + chunkSize;
+        	executor.execute(new ResetNodes(nodeArray, startIndex, endIndex));
+		}
+        executor.shutdown();
+        while (!executor.isTerminated()) {/*wait for the operation to finish*/}
 	}
 
 	@Override

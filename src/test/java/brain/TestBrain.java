@@ -454,6 +454,24 @@ class TestBrain {
 		LayeredBrain.setDefaultLinkVariation(0);
 		LayeredBrain brain = new LayeredBrain(1, 1, 2, 20);
 		assertEquals(400, brain.compute(new float[] {1})[0]);
+		FlexibleBrain.setTimeToCompute(4);
+		FlexibleBrain b2 = new FlexibleBrain(1, 300, 100);
+		for (int i = 0; i < 100; i++) {
+			b2.addLink(b2.getInputs()[0], b2.getHidden()[i], 1.0f);
+		}
+		for (int i = 100; i < 200; i++) {
+			b2.addLink(b2.getHidden()[i-100], b2.getHidden()[i], 1.0f);
+		}
+		for (int i = 200; i < 300; i++) {
+			b2.addLink(b2.getHidden()[i-100], b2.getHidden()[i], 1.0f);
+		}
+		for (int i = 0; i < 100; i++) {
+			b2.addLink(b2.getHidden()[i+200], b2.getOutputs()[i], 1.0f);
+		}
+		float[] output = b2.compute(new float[] {1});
+		for (int i = 0; i < 100; i++) {
+			assertEquals(1.0f, output[i]);
+		}
 	}
 
 }
