@@ -1,6 +1,6 @@
 <h1> Evolution2 </h1>
 
-Version 1.5
+Version 1.5.1
 
 this is my second neural network project. In this project, I want to make a structure that is more optimized and open to new features than the last. <br>
 
@@ -10,7 +10,11 @@ I just do that for fun, so feel free to use this however you like.
 
 <h2> version history </h2>
 
-<h5> 1.5 </h5>
+<h4> 1.5.1 </h4>
+
+Implementation of multithreading in the computing process of the FlexibleBrain
+
+<h4> 1.5 </h4>
 
 Implementation of multithreading in the computing process of the LayeredBrain
 
