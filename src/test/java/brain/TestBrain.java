@@ -412,7 +412,8 @@ class TestBrain {
 		assertEquals(3, m6cast.getOldNodePosition());
 	}
 	
-	@Test void testCombinaison() {
+	@Test 
+	void testLayeredBrainCombinaison() {
 		LayeredBrain.setDefaultLinkValue(0);
 		LayeredBrain.setDefaultLinkVariation(1f);
 		//test of combinaison of two brains with the same model
@@ -427,6 +428,12 @@ class TestBrain {
 		assertNotNull(b5.compute(input));
 		Brain b6 = Brain.combine(b4, b1);
 		assertNotNull(b6.compute(input));
+	}
+	
+	@Test
+	void testFlexibleBrainCombinaison() {
+		FlexibleBrain.setTimeToCompute(2);
+		float[] input = new float[] {1};
 		//test for the FlexibleBrain
 		FlexibleBrain b7 = new FlexibleBrain(1, 2, 1);
 		FlexibleBrain b8 = new FlexibleBrain(1, 5, 1);
@@ -436,14 +443,14 @@ class TestBrain {
 		Brain b10 = Brain.combine(b7, b8);
 		assertEquals(b7.compute(input)[0]/2 , b10.compute(input)[0]);
 		FlexibleBrain b11 = new FlexibleBrain(b7);
-		//b11.changeRandomLinkFactor(1);
+		b11.changeRandomLinkFactor(1);
 		b7.addLink(b7.getInputs()[0], b7.getOutputs()[0], 0.5f);
 		Brain b12 = Brain.combine(b7, b11);
 		assertEquals(1, ((FlexibleBrain) b12).getLinks().size());
 		assertEquals((b7.compute(input)[0] + b11.compute(input)[0])/2 , b12.compute(input)[0]);
 		b11.addRandomLink(5);
 		b11.addRandomLink(2);
-		b7.addRandomLink(4);
+		b11.addRandomLink(4);
 		Brain b13 = Brain.combine(b7, b11);
 		assertEquals((b7.compute(input)[0] + b11.compute(input)[0])/2 , b13.compute(input)[0]);
 	}
