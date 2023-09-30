@@ -22,7 +22,7 @@ import brain.mutation.MutationLinkFactor;
 public class LayeredBrain extends Brain {
 	
 	/***********************************************************************************/
-	/*                           integrated classes                                    */
+	/*                     integrated classes for multithreading                       */
 	/***********************************************************************************/
 	
 	/**
@@ -165,33 +165,6 @@ public class LayeredBrain extends Brain {
 		    if (i != position) newArray[j++] = array[i];
 		}
 		return newArray;
-	}
-
-	/**
-	 * Private function to transmit the signal from one layer to the other.
-	 * @param sourceLayer the index of the source layer
-	 */
-	private void transmitNextLayer(int sourceLayer) {
-		//getting keys values
-		int nbThreads = Runtime.getRuntime().availableProcessors();
-		int chunkSize = (this.links[sourceLayer][0].length / nbThreads) + 1;
-		int nbIterations = (this.links[sourceLayer][0].length < nbThreads)
-				? this.links[sourceLayer][0].length : nbThreads;
-		for (int j = 0; j < this.links[sourceLayer].length; j++) {//for each source node
-			//transmitting the signal through multiple threads
-	        ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
-			for (int k = 0; k < nbIterations; k++) {
-				int startIndex = k * chunkSize;
-				int endIndex = startIndex + chunkSize;
-            	executor.execute(new TransmitSignal(
-            			this.nodes[sourceLayer][j], 
-            			this.links[sourceLayer][j], 
-            			this.nodes[sourceLayer + 1], 
-            			startIndex, endIndex));
-			}
-	        executor.shutdown();
-	        while (!executor.isTerminated()) {/*wait for the operation to finish*/}
-		}
 	}
 	
 	/***********************************************************************************/
@@ -457,6 +430,33 @@ public class LayeredBrain extends Brain {
 		//resetting the nodes
 		for (float[] row : this.nodes) Arrays.fill(row, 0);
 		return results;
+	}
+	
+	/**
+	 * Private function to transmit the signal from one layer to the other.
+	 * @param sourceLayer the index of the source layer
+	 */
+	private void transmitNextLayer(int sourceLayer) {
+		//getting keys values
+		int nbThreads = Runtime.getRuntime().availableProcessors();
+		int chunkSize = (this.links[sourceLayer][0].length / nbThreads) + 1;
+		int nbIterations = (this.links[sourceLayer][0].length < nbThreads)
+				? this.links[sourceLayer][0].length : nbThreads;
+		for (int j = 0; j < this.links[sourceLayer].length; j++) {//for each source node
+			//transmitting the signal through multiple threads
+	        ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+			for (int k = 0; k < nbIterations; k++) {
+				int startIndex = k * chunkSize;
+				int endIndex = startIndex + chunkSize;
+            	executor.execute(new TransmitSignal(
+            			this.nodes[sourceLayer][j], 
+            			this.links[sourceLayer][j], 
+            			this.nodes[sourceLayer + 1], 
+            			startIndex, endIndex));
+			}
+	        executor.shutdown();
+	        while (!executor.isTerminated()) {/*wait for the operation to finish*/}
+		}
 	}
 
 	@Override
