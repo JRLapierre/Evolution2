@@ -18,7 +18,7 @@ import brain.LayeredBrain;
  */
 public class Simulation1 {
 
-	private static String folderName = "saves/simulation_3";
+	private static String folderName = "saves/simulation_test";
 	
 	private static Evaluation evaluation = population -> {
 		float best = -1000f;
@@ -52,7 +52,7 @@ public class Simulation1 {
 	
 	public static void main(String[] args) {
 		LearningAlgorithm algo = setInitialSimulation();
-		algo.setRunningTime(10000);
+		//algo.setRunningTime(1000);
 		//algo.setAutosaveTime(1000);
 		new Controller(algo);
 	}
