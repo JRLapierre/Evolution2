@@ -1,6 +1,6 @@
 <h1> Evolution2 </h1>
 
-Version 1.5.1
+Version 1.5.2
 
 this is my second neural network project. In this project, I want to make a structure that is more optimized and open to new features than the last. <br>
 
@@ -9,6 +9,10 @@ I made two models of neral network (see package brain), one learning algorithm a
 I just do that for fun, so feel free to use this however you like.
 
 <h2> version history </h2>
+
+<h4> 1.5.2 </h4>
+
+correction of a bug : when the window was closed, the simulation continued running. This is not the case anymore.
 
 <h4> 1.5.1 </h4>
 
