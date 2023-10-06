@@ -73,7 +73,7 @@ public abstract class LearningAlgorithm extends Thread {
 	 * Method that allows us to pause and resume the program.
 	 */
     public void playPause() {
-        if(pause) resumeProgram();
+        if (pause) resumeProgram();
         else pause=true;
     }
 

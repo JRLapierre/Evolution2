@@ -1,5 +1,8 @@
 package algorithm;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -64,9 +67,43 @@ public class Controller {
 	private LearningAlgorithm algorithm;
 	
 	/***********************************************************************************/
+	/*                               action methods                                    */
+	/***********************************************************************************/
+	
+	/**
+	 * This function contains the code to proprely end the program.
+	 */
+	private void endProgram() {
+		algorithm.endProgram();
+		try {
+		    algorithm.join();
+		} catch (InterruptedException e) {
+		    e.printStackTrace();
+		    algorithm.interrupt();
+		}
+		window.dispose();
+	}
+	
+	/**
+	 * This function contains the pause to proprely pause and resume the program.
+	 */
+	private void pauseProgram() {
+    	algorithm.playPause();
+    	if (algorithm.isPaused()) {
+    		while (algorithm.getState() != Thread.State.WAITING);
+    		textArea.setText("program paused");
+    	} else {
+    		textArea.setText("program running...");
+    	}
+	}
+	
+	/***********************************************************************************/
 	/*                           Initialization methods                                */
 	/***********************************************************************************/
 	
+	/**
+	 * This private function concentrate the setting up of the display.
+	 */
 	private void initPannels() {
 		//set the layout
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -85,23 +122,24 @@ public class Controller {
         window.setVisible(true);
 	}
 	
-	private void initButtons() {
+	/**
+	 * This private function sets up the interraction with the user
+	 */
+	private void initInterractions() {
+		//closing the window
+		window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+            	endProgram();
+            }
+        });
 		//stop button
 		stop.addActionListener(e -> {
-    		if(!algorithm.isPaused()) algorithm.playPause();
-    		algorithm.endProgram();
-    		window.dispose();
-    		System.exit(0);
+    		endProgram();
         });
 		//play/pause button
 		playPause.addActionListener(e -> {
-        	algorithm.playPause();
-        	if (algorithm.isPaused()) {
-        		while (algorithm.getState() != Thread.State.WAITING);
-        		textArea.setText("program paused");
-        	} else {
-        		textArea.setText("");
-        	}
+			pauseProgram();
         });
 	}
 	
@@ -115,7 +153,7 @@ public class Controller {
 	 */
 	public Controller(LearningAlgorithm algorithm) {
 		this.algorithm = algorithm;
-		this.initButtons();
+		this.initInterractions();
 		this.initPannels();
 		algorithm.start();
 	}
