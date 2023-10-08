@@ -3,6 +3,9 @@ package algorithm.NEAT;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -12,6 +15,7 @@ import algorithm.Evaluation;
 import algorithm.LearningAlgorithm;
 import algorithm.NEAT.reproduction.Elitism;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
+import algorithm.NEAT.reproduction.RouletteSelection;
 import brain.Brain;
 import brain.LayeredBrain;
 
@@ -137,10 +141,54 @@ class TestNEATAlgorithm {
         	//comparing the best
         	assertTrue(algo.getPopulation()[0].getScore() >= bestScore);
         	bestScore = algo.getPopulation()[0].getScore();
-        	System.out.println(bestScore);
         	algo.reproduce();
         }
 
+	}
+	
+	@Test
+	void testSaveGenealogy() {
+		//delete the folder
+		File folder = new File("saves/testGenealogy");
+		if (folder.exists()) {
+			deleteFolder(folder);
+		}
+		//a lambda expression that seek the highest output
+		Evaluation evaluation = population -> {
+			float[] input = new float[] {1};
+			float result;
+			for (Individual individual : population) {
+				result = individual.getBrain().compute(input)[0];
+				individual.updateScore(result);
+			}
+		};
+		ReproductionAlgorithm reproduction = new RouletteSelection(5, 10, 15, 15);
+		Brain.setTraceMutation(false);
+		Brain brain = new LayeredBrain(1,5,5,5);
+		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, evaluation);
+		algo.setRegistrationFolderName("saves/testGenealogy");
+		//set some random things for more cahos
+		reproduction.setAddNode(5);
+		reproduction.setChangeLinkFactor(5, 0.5f);
+		reproduction.setDeleteNode(5);
+		//check for each generation
+		for (int i = 0; i < 3; i++) {
+			algo.saveGenealogy();
+			File infosGeneration = new File(folder + "/generations/generation_"+i+".bin");
+			try {
+				ByteBuffer bb = ByteBuffer.wrap(Files.readAllBytes(infosGeneration.toPath()));
+				for (Individual individual : algo.getPopulation()) {
+					assertEquals(individual.getId(), bb.getInt());
+					assertEquals(individual.getParentId(), bb.getInt());
+					assertEquals(individual.getParent2Id(), bb.getInt());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				fail();
+			}
+			algo.evaluate();
+			algo.reproduce();
+		}
 	}
 
 }
