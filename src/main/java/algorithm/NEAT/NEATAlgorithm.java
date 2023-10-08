@@ -189,6 +189,32 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	}
 	
 	@Override
+	public void saveGenealogy() {
+		//create the folder and the file if it is not created
+		String folderName = this.registrationFolder + "/generations";
+		File settingsFile = new File(folderName);
+		settingsFile.mkdirs();
+		//get the informations about the individuals (12 bytes for each individual)
+		ByteBuffer bb = ByteBuffer.allocate(12 * this.population.length);
+		for (Individual individual : this.population) {
+			bb.putInt(individual.getId());
+			bb.putInt(individual.getParentId());
+			bb.putInt(individual.getParent2Id());
+		}
+    	//file registration
+		String path = folderName + "/generation_"+ this.numGeneration +".bin";
+		try {
+	    	FileOutputStream fos = new FileOutputStream(path);
+			fos.write(bb.array());
+	    	fos.flush();
+	    	fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+            System.exit(1);
+		}
+	}
+	
+	@Override
 	public void next() {
 		this.evaluate();
 		this.reproduce();

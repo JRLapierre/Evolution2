@@ -209,6 +209,11 @@ public abstract class LearningAlgorithm extends Thread {
 	protected abstract void save();
 	
 	/**
+	 * method that saves informations about each iterations of the simulation.
+	 */
+	protected abstract void saveGenealogy();
+	
+	/**
 	 * method who takes the learning to the next iteration
 	 */
 	protected abstract void next();
@@ -233,12 +238,14 @@ public abstract class LearningAlgorithm extends Thread {
 	@Override
 	public void run() {
 		while (this.runningChoice.runningCondition()) {
+			this.saveGenealogy();
 			if (managePauseStop()) return;
 			if (autosaveCondition.saveCondition()) this.save();
 			this.next();
 		}
 		//at the end
 		this.save();
+		this.saveGenealogy();
 		System.exit(0);
 	}
 	

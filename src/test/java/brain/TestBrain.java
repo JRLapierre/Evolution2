@@ -428,6 +428,9 @@ class TestBrain {
 		assertNotNull(b5.compute(input));
 		Brain b6 = Brain.combine(b4, b1);
 		assertNotNull(b6.compute(input));
+		b1.deleteRandomNode();
+		Brain b7 = Brain.combine(b1, b4);
+		assertNotNull(b7.compute(input));
 	}
 	
 	@Test
