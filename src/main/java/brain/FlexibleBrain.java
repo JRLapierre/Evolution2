@@ -676,7 +676,23 @@ public class FlexibleBrain extends Brain {
 	
 	@Override
 	public float[] compute(float[] inputs) {
-		int nbThreads = Runtime.getRuntime().availableProcessors();
+		//assign the inputs value into the inputs nodes
+		for (int i = 0 ; i < inputs.length; i++) this.inputs[i].value = inputs[i];
+		
+		//deciding if we use multiple threads
+		int nbThreads = (Brain.maxUsableCores < Runtime.getRuntime().availableProcessors()) ?
+				Brain.maxUsableCores : Runtime.getRuntime().availableProcessors();
+		
+		if (nbThreads == 1) return computeOneThread();
+		else return computeMultipleThreads(nbThreads);
+	}
+	
+	/**
+	 * Computinf function made to function using multiple threads
+	 * @param nbThreads the number of threads that will be used
+	 * @return an array of outputs
+	 */
+	private float[] computeMultipleThreads(int nbThreads) {
 		int linksChunkSize = (this.links.size() / nbThreads) + 1;
 		int hiddenChunkSize = (this.hidden.length / nbThreads) + 1;
 		int outputsChunkSize = (this.outputs.length / nbThreads) + 1;
@@ -684,8 +700,6 @@ public class FlexibleBrain extends Brain {
 		int nbHiddenIterations = (this.hidden.length < nbThreads) ? this.links.size() : nbThreads;
 		int nbOutputsIterations = (this.outputs.length < nbThreads) ? this.links.size() : nbThreads;
 
-		//assign the inputs value into the inputs nodes
-		for (int i = 0 ; i < inputs.length; i++) this.inputs[i].value = inputs[i];
 		//transmission of the signal
 		for (int i = 0 ; i < timeToCompute ; i++) {
 			//taking the signal inside the links
@@ -701,6 +715,29 @@ public class FlexibleBrain extends Brain {
 		//resetting the outputs and the hidden nodes
 		this.resetNodeArray(this.hidden, nbThreads, hiddenChunkSize, nbHiddenIterations);
 		this.resetNodeArray(this.outputs, nbThreads, outputsChunkSize, nbOutputsIterations);
+		return outputsCopy;
+	}
+	
+	/**
+	 * Computing function optimised for the usage of one thread.
+	 * @return an array of outputs
+	 */
+	private float[] computeOneThread() {
+		//transmission of the signal
+		for (int i = 0 ; i < timeToCompute ; i++) {
+			//taking the signal inside the links
+			for (Link link : this.links) link.takeSignal();
+			//resetting the value in the hidden nodes
+			for (int j = 0 ; j < this.hidden.length; j++) this.hidden[j].value = 0f;
+			//sending the signal in the next node
+			for (Link link : this.links) link.sendSignal();
+		}
+		//transmitting the outputs value into a new array (just to be safe)
+		float[] outputsCopy = new float[this.outputs.length];
+		for (int i = 0 ; i < this.outputs.length; i++) outputsCopy[i] = this.outputs[i].value;
+		//resetting the outputs and the hidden nodes
+		for (int i = 0 ; i < this.hidden.length; i++) this.hidden[i].value = 0f;
+		for (int i = 0 ; i < this.outputs.length; i++) this.outputs[i].value = 0f;
 		return outputsCopy;
 	}
 	
