@@ -1,6 +1,6 @@
 <h1> Evolution2 </h1>
 
-Version 1.6
+Version 1.7
 
 this is my second neural network project. In this project, I want to make a structure that is more optimized and open to new features than the last. <br>
 
@@ -9,6 +9,11 @@ I made two models of neral network (see package brain), one learning algorithm a
 I just do that for fun, so feel free to use this however you like.
 
 <h2> version history </h2>
+
+<h4> 1.7 </h4>
+
+We can now controll the number of cores used in the computing process of the brain.  
+The file "Simulation1" has been transformed into a proper tutorial file.
 
 <h4> 1.6 </h4>
 
