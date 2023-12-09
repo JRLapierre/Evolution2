@@ -19,6 +19,12 @@ public abstract class Brain {
 	/***********************************************************************************/
 	
 	/**
+	 * The maximum number of cores that can be used in the computing process <br>
+	 * By default, this value is set to 1.
+	 */
+	protected static int maxUsableCores = 1;
+	
+	/**
 	 * the source of random numbers for the mutations.
 	 */
 	protected Random random = new Random();
@@ -36,6 +42,18 @@ public abstract class Brain {
 	/***********************************************************************************/
 	/* 							    concrete methods                                   */
 	/***********************************************************************************/
+	
+	/**
+	 * Setter for the maximum number of cores <br>
+	 * The default value for the maximum number of usable core is set to one
+	 * @param maxUsableCores the maximum number of cores that the program can use in the 
+	 * computing process. <br>
+	 * This function will do nothing if maxUsableCores is smaller than one.
+	 */
+	public static void setMaxUsableCores(int maxUsableCores) {
+		if (maxUsableCores < 1) return;
+		Brain.maxUsableCores = maxUsableCores;
+	}
 	
 	/**
 	 * setter for the trace of the mutation.

@@ -483,5 +483,54 @@ class TestBrain {
 			assertEquals(1.0f, output[i]);
 		}
 	}
+	
+	@Test
+	void testFlexibleBrainNbOfCores() {
+		FlexibleBrain b1 = new FlexibleBrain(1, 10, 1);
+		for (int i = 0; i < 100; i++) {
+			b1.addRandomLink(1);
+			b1.changeRandomLinkFactor(0.5f);
+		}
+		FlexibleBrain b2 = new FlexibleBrain(1, 1, 1);
+		for (int i = 0; i < 6; i++) {
+			b2.addRandomLink(1);
+			b2.changeRandomLinkFactor(0.5f);
+		}
+		//compare results
+		Brain.setMaxUsableCores(8);
+		float resultb11 = b1.compute(new float[] {1})[0];
+		float resultb21 = b2.compute(new float[] {1})[0];
+		Brain.setMaxUsableCores(1);
+		float resultb12 = b1.compute(new float[] {1})[0];
+		float resultb22 = b2.compute(new float[] {1})[0];
+		assertEquals(resultb11, resultb12);
+		assertEquals(resultb21, resultb22);
+	}
+	
+	@Test
+	void testLayeredBrainNbOfCores() {
+		LayeredBrain b1 = new LayeredBrain(1, 1, 10, 10);
+		for (int i = 0; i < 100; i++) {
+			b1.changeRandomLinkFactor(0.5f);
+			b1.addRandomNode();
+			b1.deleteRandomNode();
+		}
+		LayeredBrain b2 = new LayeredBrain(1, 1, 1, 1);
+		for (int i = 0; i < 6; i++) {
+			b1.changeRandomLinkFactor(0.5f);
+			b1.addRandomNode();
+			b1.deleteRandomNode();
+		}
+		//compare results
+		Brain.setMaxUsableCores(8);
+		float resultb11 = b1.compute(new float[] {1})[0];
+		float resultb21 = b2.compute(new float[] {1})[0];
+		Brain.setMaxUsableCores(1);
+		float resultb12 = b1.compute(new float[] {1})[0];
+		float resultb22 = b2.compute(new float[] {1})[0];
+		assertEquals(resultb11, resultb12);
+		assertEquals(resultb21, resultb22);
+	}
+
 
 }

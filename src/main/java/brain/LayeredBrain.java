@@ -420,10 +420,15 @@ public class LayeredBrain extends Brain {
 	public float[] compute(float[] inputs) {
 		//getting the inputs
 		this.nodes[0] = Arrays.copyOf(inputs, inputs.length);
+		
+		//deciding if we use multiple threads
+		int nbThreads = (Brain.maxUsableCores < Runtime.getRuntime().availableProcessors()) ?
+				Brain.maxUsableCores : Runtime.getRuntime().availableProcessors();
+		
 		//transmitting in the layers
-		for (int i = 0; i < this.links.length; i++) { //for each layer
-			if (this.links[i].length != 0) transmitNextLayer(i);
-		}
+		if (nbThreads == 1) this.transmitLayers();
+		else this.transmitLayers(nbThreads);
+		
 		//copiing the results
 		float[] results = Arrays.copyOf(this.nodes[this.nodes.length - 1], 
 				this.nodes[this.nodes.length - 1].length);
@@ -433,12 +438,37 @@ public class LayeredBrain extends Brain {
 	}
 	
 	/**
+	 * Private function to tranmit the signal in the layers using a sigle thread.
+	 */
+	private void transmitLayers() {
+		for (int i = 0; i < this.links.length; i++) { //for each layer
+			//transmitting the signals to the other layers
+			for (int j = 0; j < this.links[i].length; j++) {//for each source node
+				for (int k = 0; k < this.links[i][j].length; k++) {//for each target node
+					//take the value from the source and transmitting it to the target
+					this.nodes[i+1][k] += this.nodes[i][j] * this.links[i][j][k];
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Private function to transmit the signal in the layers using nbThreads number of
+	 * cores.
+	 * @param nbThreads The number of threads that will be used
+	 */
+	private void transmitLayers(int nbThreads) {
+		for (int i = 0; i < this.links.length; i++) { //for each layer
+			if (this.links[i].length != 0) transmitNextLayer(nbThreads, i);
+		}
+	}
+	
+	/**
 	 * Private function to transmit the signal from one layer to the other.
 	 * @param sourceLayer the index of the source layer
 	 */
-	private void transmitNextLayer(int sourceLayer) {
+	private void transmitNextLayer(int nbThreads, int sourceLayer) {
 		//getting keys values
-		int nbThreads = Runtime.getRuntime().availableProcessors();
 		int chunkSize = (this.links[sourceLayer][0].length / nbThreads) + 1;
 		int nbIterations = (this.links[sourceLayer][0].length < nbThreads)
 				? this.links[sourceLayer][0].length : nbThreads;
