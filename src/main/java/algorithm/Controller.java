@@ -67,13 +67,25 @@ public class Controller {
 	private LearningAlgorithm algorithm;
 	
 	/***********************************************************************************/
-	/*                               action methods                                    */
+	/*                                  constructor                                    */
+	/***********************************************************************************/
+	
+	/**
+	 * Constructor for the controller
+	 * @param algorithm the learning algorithm that will be used
+	 */
+	public Controller(LearningAlgorithm algorithm) {
+		this.algorithm = algorithm;
+	}
+	
+	/***********************************************************************************/
+	/*                                  functions                                      */
 	/***********************************************************************************/
 	
 	/**
 	 * This function contains the code to proprely end the program.
 	 */
-	private void endProgram() {
+	public void stop() {
 		algorithm.endProgram();
 		try {
 		    algorithm.join();
@@ -87,7 +99,7 @@ public class Controller {
 	/**
 	 * This function contains the pause to proprely pause and resume the program.
 	 */
-	private void pauseProgram() {
+	public void playPause() {
     	algorithm.playPause();
     	if (algorithm.isPaused()) {
     		while (algorithm.getState() != Thread.State.WAITING);
@@ -97,12 +109,34 @@ public class Controller {
     	}
 	}
 	
-	/***********************************************************************************/
-	/*                           Initialization methods                                */
-	/***********************************************************************************/
+	/**
+	 * Function to start the learning algorithm from the code. <br>
+	 * The program will start immediately.
+	 */
+	public void startAlgorithm() {
+		this.algorithm.start();
+		this.playPause();
+	}
 	
 	/**
-	 * This private function concentrate the setting up of the display.
+	 * This private function sets up the interraction of the buttons
+	 */
+	private void initInterractions() {
+		//closing the window
+		window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+            	stop();
+            }
+        });
+		//stop button
+		stop.addActionListener(e -> stop());
+		//play/pause button
+		playPause.addActionListener(e -> playPause());
+	}
+	
+	/**
+	 * This private function sets up the display
 	 */
 	private void initPannels() {
 		//set the layout
@@ -123,38 +157,13 @@ public class Controller {
 	}
 	
 	/**
-	 * This private function sets up the interraction with the user
+	 * Function that opens a window for a direct control of the use over the learning 
+	 * algorithm. <br>
+	 * The program will start in pause.
 	 */
-	private void initInterractions() {
-		//closing the window
-		window.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-            	endProgram();
-            }
-        });
-		//stop button
-		stop.addActionListener(e -> {
-    		endProgram();
-        });
-		//play/pause button
-		playPause.addActionListener(e -> {
-			pauseProgram();
-        });
-	}
-	
-	/***********************************************************************************/
-	/*                                  constructor                                    */
-	/***********************************************************************************/
-	
-	/**
-	 * Constructor that open a window and launch the simulation
-	 * @param algorithm the learning algorithm that will be used
-	 */
-	public Controller(LearningAlgorithm algorithm) {
-		this.algorithm = algorithm;
+	public void openWindow() {
 		this.initInterractions();
 		this.initPannels();
-		algorithm.start();
+		this.algorithm.start();
 	}
 }
