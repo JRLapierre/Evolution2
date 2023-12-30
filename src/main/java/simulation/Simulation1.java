@@ -136,7 +136,18 @@ public class Simulation1 {
 		algo.setRunningTime(10000);
 		algo.setAutosaveTime(1000);
 		//creation of the controller for the algorithm
-		new Controller(algo);
+		var controller = new Controller(algo);
+		/*
+		 * You can either control the algorithm in the code, or control it with a
+		 * graphical interface.
+		 * To use the algorithm in the code, you can use the following methods : 
+		 *  - startAlgorithm
+		 *  - playPause
+		 *  - stop
+		 * To use the graphical interface, you can use openWindow. This method will open
+		 * a window with the necessary buttons to control the code manually.
+		 */
+		controller.openWindow();
 	}
 	
 }
