@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -89,13 +88,8 @@ public class NEATAlgorithm extends LearningAlgorithm {
 		File[] individuals=new File(folder).listFiles();
 		Individual[] savedPopulation = new Individual[individuals.length];
 		//for each file
-		try {
-			for (int i = 0; i < individuals.length; i++) {
-				savedPopulation[i] = new Individual(individuals[i]);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+		for (int i = 0; i < individuals.length; i++) {
+			savedPopulation[i] = new Individual(individuals[i]);
 		}
 		return savedPopulation;
 	}

@@ -3,7 +3,6 @@ package algorithm.NEAT;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
@@ -84,17 +83,12 @@ class TestIndividual {
 		//create the files for each individual
 		File copyFile = new File(folderName + "/" + original.getId() + ".bin");
 		original.save(copyFile);
-		try {
-			Individual copy = new Individual(copyFile);
-			assertEquals(original.getId(), copy.getId());
-			assertEquals(original.getParentId(), copy.getParentId());
-			assertEquals(original.getParent2Id(), copy.getParent2Id());
-			assertEquals(original.getBrain().compute(new float[] {1})[0], 
-					copy.getBrain().compute(new float[] {1})[0]);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail("file not found");
-		}
+		Individual copy = new Individual(copyFile);
+		assertEquals(original.getId(), copy.getId());
+		assertEquals(original.getParentId(), copy.getParentId());
+		assertEquals(original.getParent2Id(), copy.getParent2Id());
+		assertEquals(original.getBrain().compute(new float[] {1})[0], 
+				copy.getBrain().compute(new float[] {1})[0]);
 	}
 	
 	@Test

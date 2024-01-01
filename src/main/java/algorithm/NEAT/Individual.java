@@ -116,14 +116,20 @@ public class Individual {
 	/**
 	 * Constructor from a saved file
 	 * @param file the file containing the binary save
-	 * @throws IOException if the file does not exists
 	 */
-	public Individual(File file) throws IOException {
-		ByteBuffer bb = ByteBuffer.wrap(Files.readAllBytes(file.toPath()));
-		this.id = bb.getInt();
-		this.parentId = bb.getInt();
-		this.parent2Id = bb.getInt();
-		this.brain = Brain.restore(bb);
+	public Individual(File file) {
+		ByteBuffer bb;
+		try {
+			bb = ByteBuffer.wrap(Files.readAllBytes(file.toPath()));
+			this.id = bb.getInt();
+			this.parentId = bb.getInt();
+			this.parent2Id = bb.getInt();
+			this.brain = Brain.restore(bb);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
 	}
 	
 	/***********************************************************************************/
