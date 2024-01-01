@@ -1,6 +1,9 @@
 package algorithm.NEAT;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 
 import brain.Brain;
 
@@ -110,10 +113,12 @@ public class Individual {
 	}
 	
 	/**
-	 * Constructor from a save
-	 * @param bb the ByteBuffer containing the informations
+	 * Constructor from a saved file
+	 * @param file the file containing the binary save
+	 * @throws IOException if the file does not exists
 	 */
-	public Individual(ByteBuffer bb) {
+	public Individual(File file) throws IOException {
+		ByteBuffer bb = ByteBuffer.wrap(Files.readAllBytes(file.toPath()));
 		this.id = bb.getInt();
 		this.parentId = bb.getInt();
 		this.parent2Id = bb.getInt();

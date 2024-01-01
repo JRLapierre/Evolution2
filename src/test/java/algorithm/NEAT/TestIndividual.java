@@ -2,7 +2,9 @@ package algorithm.NEAT;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.nio.ByteBuffer;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
@@ -75,14 +77,35 @@ class TestIndividual {
 		LayeredBrain.setDefaultLinkVariation(2);
 		Brain brain = new LayeredBrain(1,1,2,6);
 		Individual original = new Individual(brain);
-		ByteBuffer bb = ByteBuffer.wrap(original.toByte());
-		Individual copy = new Individual(bb);
-		assertEquals(original.getId(), copy.getId());
-		assertEquals(original.getParentId(), copy.getParentId());
-		assertEquals(original.getParent2Id(), copy.getParent2Id());
-		assertEquals(original.getBrain().compute(new float[] {1})[0], 
-				copy.getBrain().compute(new float[] {1})[0]);
+		//create a copy of the brain
+		//create the folder if it is not created
+		String folderName = "saves/test_individual";
+		File settingsFile = new File(folderName);
+		settingsFile.mkdirs();
+		//create the files for each individual
+		try {
+			FileOutputStream fos = new FileOutputStream(
+					folderName + "/" + original.getId() + ".bin");
+        	fos.write(original.toByte()); 
+        	fos.flush();
+        	fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+	        System.exit(1);
 		}
+		File copyFile = new File("saves/test_individual/" + original.getId() + ".bin");
+		try {
+			Individual copy = new Individual(copyFile);
+			assertEquals(original.getId(), copy.getId());
+			assertEquals(original.getParentId(), copy.getParentId());
+			assertEquals(original.getParent2Id(), copy.getParent2Id());
+			assertEquals(original.getBrain().compute(new float[] {1})[0], 
+					copy.getBrain().compute(new float[] {1})[0]);
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("file not found");
+		}
+	}
 	
 	@Test
 	void testIndividualScore() {

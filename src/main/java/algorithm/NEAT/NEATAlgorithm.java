@@ -74,10 +74,8 @@ public class NEATAlgorithm extends LearningAlgorithm{
 		File[] individuals=new File(folder + "/generation_"+this.numGeneration).listFiles();
 		this.population = new Individual[individuals.length];
 		//for each file
-		ByteBuffer bb;
 		for (int i = 0; i < individuals.length; i++) {
-			bb = ByteBuffer.wrap(Files.readAllBytes(individuals[i].toPath()));
-			this.population[i] = new Individual(bb);
+			this.population[i] = new Individual(individuals[i]);
 		}
 	}
 	
