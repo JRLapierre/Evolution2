@@ -59,15 +59,32 @@ class TestNEATAlgorithm {
 		Brain brain = new LayeredBrain(1,1,1,1);
 		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, null);
 		algo.setRegistrationFolderName("saves/testPopulation");
-		algo.registerGeneration();//should be 1 
+		algo.saveGeneration();//should be 1 
 		//for the first generation
 		File gen0 = new File("saves/testPopulation/generation_0");
 		assertEquals(1, gen0.listFiles().length);
+		float[] input = new float[] {1};
+		Individual[] population = algo.restorePopulation("saves/testPopulation/generation_0");
+		assertEquals(algo.getPopulation()[0].getId(), population[0].getId());
+		assertEquals(algo.getPopulation()[0].getParentId(), population[0].getParentId());
+		assertEquals(algo.getPopulation()[0].getParent2Id(), population[0].getParent2Id());
+		assertEquals(algo.getPopulation()[0].getScore(), population[0].getScore());
+		assertEquals(algo.getPopulation()[0].getBrain().compute(input)[0], population[0].getBrain().compute(input)[0]);
 		algo.reproduce();
-		algo.registerGeneration();//should be 30 individuals
+		algo.saveGeneration();//should be 30 individuals
 		//for the second generation
 		File gen1 = new File("saves/testPopulation/generation_1");
 		assertEquals(30, gen1.listFiles().length);
+		population = algo.restorePopulation("saves/testPopulation/generation_1");
+		Arrays.sort(algo.getPopulation(), Comparator.comparingInt(Individual::getId));
+		Arrays.sort(population, Comparator.comparingInt(Individual::getId));
+		for (int i = 0; i < 30; i++) {
+			assertEquals(algo.getPopulation()[i].getId(), population[i].getId());
+			assertEquals(algo.getPopulation()[i].getParentId(), population[i].getParentId());
+			assertEquals(algo.getPopulation()[i].getParent2Id(), population[i].getParent2Id());
+			assertEquals(algo.getPopulation()[i].getScore(), population[i].getScore());
+			assertEquals(algo.getPopulation()[i].getBrain().compute(input)[0], population[i].getBrain().compute(input)[0]);
+		}
 	}
 	
 	@Test
@@ -87,7 +104,7 @@ class TestNEATAlgorithm {
 		reproduction.setChangeLinkFactor(5, 0.5f);
 		reproduction.setDeleteNode(5);
 		algo.reproduce();
-		algo.registerGeneration();
+		algo.saveGeneration();
 		algo.registerInformations();
 		int oldCountId = Individual.getCountId();
 		NEATAlgorithm save = (NEATAlgorithm) LearningAlgorithm.restore("saves/testDataRecuperation", null);

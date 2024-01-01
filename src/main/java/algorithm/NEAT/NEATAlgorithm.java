@@ -17,7 +17,7 @@ import brain.Brain;
  * @author jrl
  *
  */
-public class NEATAlgorithm extends LearningAlgorithm{
+public class NEATAlgorithm extends LearningAlgorithm {
 	
 	/***********************************************************************************/
 	/*                                variables                                        */
@@ -62,20 +62,38 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	/**
 	 * Constructor to restore from save.
 	 * @param folder the folder containing the saves
-	 * @throws IOException if the files are not found
 	 */
-	public NEATAlgorithm(String folder, ByteBuffer settings) throws IOException {
+	public NEATAlgorithm(String folder, ByteBuffer settings) {
 		//settings file
 		this.reproductionAlgorithm = ReproductionAlgorithm.restore(settings);
 		this.numGeneration = settings.getInt();
 		Individual.setCountId(settings.getInt());
 		//individual files
-		File[] individuals=new File(folder + "/generation_"+this.numGeneration).listFiles();
-		this.population = new Individual[individuals.length];
+		this.population = this.restorePopulation(folder + "/generation_"+this.numGeneration);
+	}
+	
+	/***********************************************************************************/
+	/*                             restoration methods                                 */
+	/***********************************************************************************/
+	
+	/**
+	 * Function to restore a population from a folder
+	 * @param folder the folder containing the population
+	 * @return the population contained in the folder
+	 */
+	public Individual[] restorePopulation(String folder) {
+		File[] individuals=new File(folder).listFiles();
+		Individual[] savedPopulation = new Individual[individuals.length];
 		//for each file
-		for (int i = 0; i < individuals.length; i++) {
-			this.population[i] = new Individual(individuals[i]);
+		try {
+			for (int i = 0; i < individuals.length; i++) {
+				savedPopulation[i] = new Individual(individuals[i]);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
+		return savedPopulation;
 	}
 	
 	/***********************************************************************************/
@@ -132,7 +150,7 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	/**
 	 * This functions saves a entire generation.
 	 */
-	public void registerGeneration() {
+	public void saveGeneration() {
 		//create the folder if it is not created
 		String folderName = this.registrationFolder + "/generation_" + this.numGeneration;
 		File settingsFile = new File(folderName);
@@ -172,7 +190,7 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	
 	@Override
 	public void save() {
-		this.registerGeneration();
+		this.saveGeneration();
 		this.registerInformations();
 	}
 	
