@@ -72,7 +72,7 @@ public class NEATAlgorithm extends LearningAlgorithm {
 		this.numGeneration = settings.getInt();
 		Individual.setCountId(settings.getInt());
 		//individual files
-		this.population = this.restorePopulation(folder + "/generation_"+this.numGeneration);
+		this.population = NEATAlgorithm.restorePopulation(folder + "/generation_"+this.numGeneration);
 	}
 	
 	/***********************************************************************************/
@@ -84,7 +84,7 @@ public class NEATAlgorithm extends LearningAlgorithm {
 	 * @param folder the folder containing the population
 	 * @return the population contained in the folder
 	 */
-	public Individual[] restorePopulation(String folder) {
+	public static Individual[] restorePopulation(String folder) {
 		File[] individuals=new File(folder).listFiles();
 		Individual[] savedPopulation = new Individual[individuals.length];
 		//for each file

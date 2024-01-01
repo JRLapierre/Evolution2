@@ -64,7 +64,7 @@ class TestNEATAlgorithm {
 		File gen0 = new File("saves/testPopulation/generation_0");
 		assertEquals(1, gen0.listFiles().length);
 		float[] input = new float[] {1};
-		Individual[] population = algo.restorePopulation("saves/testPopulation/generation_0");
+		Individual[] population = NEATAlgorithm.restorePopulation("saves/testPopulation/generation_0");
 		assertEquals(algo.getPopulation()[0].getId(), population[0].getId());
 		assertEquals(algo.getPopulation()[0].getParentId(), population[0].getParentId());
 		assertEquals(algo.getPopulation()[0].getParent2Id(), population[0].getParent2Id());
@@ -75,7 +75,7 @@ class TestNEATAlgorithm {
 		//for the second generation
 		File gen1 = new File("saves/testPopulation/generation_1");
 		assertEquals(30, gen1.listFiles().length);
-		population = algo.restorePopulation("saves/testPopulation/generation_1");
+		population = NEATAlgorithm.restorePopulation("saves/testPopulation/generation_1");
 		Arrays.sort(algo.getPopulation(), Comparator.comparingInt(Individual::getId));
 		Arrays.sort(population, Comparator.comparingInt(Individual::getId));
 		for (int i = 0; i < 30; i++) {
