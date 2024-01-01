@@ -1,6 +1,7 @@
 package algorithm.NEAT;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -195,7 +196,22 @@ public class Individual {
 		bb.putInt(parent2Id);
 		bb.put(bytesBrain);
 		return bb.array();
-		
+	}
+	
+	/**
+	 * Function to save an individual in binary format.
+	 * @param fileName the name of the file that will contain the individual.
+	 */
+	public void save(File fileName) {
+		try {
+			FileOutputStream fos = new FileOutputStream(fileName);
+        	fos.write(this.toByte()); 
+        	fos.flush();
+        	fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+	        System.exit(1);
+		}
 	}
 
 }
