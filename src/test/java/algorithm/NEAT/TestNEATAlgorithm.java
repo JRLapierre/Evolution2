@@ -88,6 +88,40 @@ class TestNEATAlgorithm {
 	}
 	
 	@Test
+	void testRecuperationGenealogy() {
+		File folder = new File("saves/testGenealogy");
+		if (folder.exists()) {
+			deleteFolder(folder);
+		}
+		Individual.setCountId(0);
+		ReproductionAlgorithm reproduction = new Elitism(5, 10, 15, 15);
+		Brain brain = new LayeredBrain(1,1,1,1);
+		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, null);
+		algo.setRegistrationFolderName("saves/testGenealogy");
+		Individual[][] populations = new Individual[3][];
+		algo.saveGenealogy();
+		Arrays.sort(algo.getPopulation(), Comparator.comparingInt(Individual::getId));
+		populations[0] = algo.getPopulation();
+		algo.reproduce();
+		algo.saveGenealogy();
+		Arrays.sort(algo.getPopulation(), Comparator.comparingInt(Individual::getId));
+		populations[1] = algo.getPopulation();
+		algo.reproduce();
+		algo.saveGenealogy();
+		Arrays.sort(algo.getPopulation(), Comparator.comparingInt(Individual::getId));
+		populations[2] = algo.getPopulation();
+		PartialIndividual[][] restoredGenealogy = NEATAlgorithm.restoreGenealogy("saves/testGenealogy/generations");
+		for (int i = 0; i < 3; i++) {
+			assertEquals(populations[i].length, restoredGenealogy[i].length);
+			for (int j = 0; j < populations[i].length; j++) {
+				assertEquals(populations[i][j].getId(), restoredGenealogy[i][j].getId());
+				assertEquals(populations[i][j].getParentId(), restoredGenealogy[i][j].getParentId());
+				assertEquals(populations[i][j].getParent2Id(), restoredGenealogy[i][j].getParent2Id());
+			}
+		}
+	}
+	
+	@Test
 	void testDataRecuperation() {
 		//delete the folder
 		File folder = new File("saves/testDataRecuperation");
