@@ -39,12 +39,12 @@ class TestNEATAlgorithm {
 		Brain brain = new LayeredBrain(1,1,1,1);
 		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, null);
 		//test of the default folder name
-		algo.registerInformations();
+		algo.saveInformations();
 		algo.setRegistrationFolderName("saves/testRelativePath");
-		algo.registerInformations();
+		algo.saveInformations();
 		//test of the absolute path
 		//algo.setRegistrationFolderName("C:\\Users\\jrl\\Desktop\\personnel\\code\\java\\Evolution2/saves/testAbsolutePath");
-		algo.registerInformations();
+		algo.saveInformations();
 
 	}
 	
@@ -139,7 +139,7 @@ class TestNEATAlgorithm {
 		reproduction.setDeleteNode(5);
 		algo.reproduce();
 		algo.saveGeneration();
-		algo.registerInformations();
+		algo.saveInformations();
 		int oldCountId = Individual.getCountId();
 		NEATAlgorithm save = (NEATAlgorithm) LearningAlgorithm.restore("saves/testDataRecuperation", null);
 		//reproduction algorithm comparaison

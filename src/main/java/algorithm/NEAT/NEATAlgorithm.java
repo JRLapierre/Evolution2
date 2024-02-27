@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import com.google.gson.annotations.Expose;
+
 import algorithm.Evaluation;
 import algorithm.LearningAlgorithm;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
@@ -29,6 +31,7 @@ public class NEATAlgorithm extends LearningAlgorithm {
 	/**
 	 * an array containing the population
 	 */
+	@Expose
 	private Individual[] population;
 	
 	/**
@@ -157,7 +160,7 @@ public class NEATAlgorithm extends LearningAlgorithm {
 	 * getter to obtain the population
 	 * @return the array containing the population
 	 */
-	protected Individual[] getPopulation() {
+	public Individual[] getPopulation() {
 		return this.population;
 	}
 	
@@ -194,14 +197,14 @@ public class NEATAlgorithm extends LearningAlgorithm {
 		settingsFile.mkdirs();
 		//create the files for each individual
 		for (Individual individual : this.population) {
-			individual.save(new File(folderName + "/" + individual.getId() + ".bin"));
+			individual.save(new File(folderName + File.separator + individual.getId() + ".bin"));
 		}
 	}
 	
 	/**
 	 * saves the simutation parameters.
 	 */
-	public void registerInformations() {
+	public void saveInformations() {
 		//create the needed folder
 		File settingsFile = new File(this.registrationFolder);
 		settingsFile.mkdirs();
@@ -228,7 +231,7 @@ public class NEATAlgorithm extends LearningAlgorithm {
 	@Override
 	public void save() {
 		this.saveGeneration();
-		this.registerInformations();
+		this.saveInformations();
 	}
 	
 	@Override

@@ -6,6 +6,8 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import com.google.gson.annotations.Expose;
+
 import algorithm.NEAT.NEATAlgorithm;
 import algorithm.autosave.AutosaveCondition;
 import algorithm.autosave.NoAutoSave;
@@ -28,11 +30,13 @@ public abstract class LearningAlgorithm extends Thread {
 	/**
 	 * Instance of a functional interface to evaluate the population
 	 */
+	@Expose
 	protected Evaluation evaluation;
 	
 	/**
 	 * the name (and the path) of the folder that will contain the saves. <br>
 	 */
+	@Expose
 	protected String registrationFolder;
 	
 	// control parameters ---------------------------------------------------------------
@@ -40,28 +44,33 @@ public abstract class LearningAlgorithm extends Thread {
 	/**
 	 * the way to run the simulation.
 	 */
+	@Expose
 	private RunningChoice runningChoice = new DefaultRunning();
 	
 	/**
 	 * the condition for automatically saving the simulation.
 	 */
+	@Expose
 	private AutosaveCondition autosaveCondition = new NoAutoSave();
 	
 	/**
 	 * the time passed in pause.
 	 */
+	@Expose
 	private long timePaused;
 	
 	/**
 	 * This boolean is true as long as the simulation doesn't end. <br>
 	 * It is swiched to false when we want to stop the simulation.
 	 */
+	@Expose
 	private boolean running = true;
 	
 	/**
 	 * This boolean determines if the simulation is in pause or not. <br>
 	 * It is set to true when the simulation is paused.
 	 */
+	@Expose
 	private boolean pause = true;
 	
 
