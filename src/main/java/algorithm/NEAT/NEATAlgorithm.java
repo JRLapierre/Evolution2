@@ -4,21 +4,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import algorithm.Evaluation;
 import algorithm.LearningAlgorithm;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import brain.Brain;
+import tools.Evaluation;
 
 /**
  * This class is the basis for a NEAT algorithm.
  * @author jrl
  *
  */
-public class NEATAlgorithm extends LearningAlgorithm{
+public class NEATAlgorithm extends LearningAlgorithm {
 	
 	/***********************************************************************************/
 	/*                                variables                                        */
@@ -27,7 +26,7 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	/**
 	 * an array containing the population
 	 */
-	private Individual[] population;
+	private transient Individual[] population;
 	
 	/**
 	 * chosen reproduction algorithm
@@ -63,22 +62,34 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	/**
 	 * Constructor to restore from save.
 	 * @param folder the folder containing the saves
-	 * @throws IOException if the files are not found
+	 * @param settings binary information about the simulation
 	 */
-	public NEATAlgorithm(String folder, ByteBuffer settings) throws IOException {
+	public NEATAlgorithm(String folder, ByteBuffer settings) {
 		//settings file
 		this.reproductionAlgorithm = ReproductionAlgorithm.restore(settings);
 		this.numGeneration = settings.getInt();
 		Individual.setCountId(settings.getInt());
 		//individual files
-		File[] individuals=new File(folder + "/generation_"+this.numGeneration).listFiles();
-		this.population = new Individual[individuals.length];
+		this.population = NEATAlgorithm.restorePopulation(folder + "/generation_"+this.numGeneration);
+	}
+	
+	/***********************************************************************************/
+	/*                             restoration methods                                 */
+	/***********************************************************************************/
+	
+	/**
+	 * Function to restore a population from a folder
+	 * @param folder the folder containing the population
+	 * @return the population contained in the folder
+	 */
+	public static Individual[] restorePopulation(String folder) {
+		File[] individuals=new File(folder).listFiles();
+		Individual[] savedPopulation = new Individual[individuals.length];
 		//for each file
-		ByteBuffer bb;
 		for (int i = 0; i < individuals.length; i++) {
-			bb = ByteBuffer.wrap(Files.readAllBytes(individuals[i].toPath()));
-			this.population[i] = new Individual(bb);
+			savedPopulation[i] = new Individual(individuals[i]);
 		}
+		return savedPopulation;
 	}
 	
 	/***********************************************************************************/
@@ -105,7 +116,7 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	 * getter to obtain the population
 	 * @return the array containing the population
 	 */
-	protected Individual[] getPopulation() {
+	public Individual[] getPopulation() {
 		return this.population;
 	}
 	
@@ -135,30 +146,21 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	/**
 	 * This functions saves a entire generation.
 	 */
-	public void registerGeneration() {
+	public void saveGeneration() {
 		//create the folder if it is not created
 		String folderName = this.registrationFolder + "/generation_" + this.numGeneration;
 		File settingsFile = new File(folderName);
 		settingsFile.mkdirs();
 		//create the files for each individual
-		try {
-			for (Individual individual : this.population) {
-				FileOutputStream fos = new FileOutputStream(
-						folderName + "/" + individual.getId() + ".bin");
-            	fos.write(individual.toByte()); 
-            	fos.flush();
-            	fos.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-	        System.exit(1);
+		for (Individual individual : this.population) {
+			individual.save(new File(folderName + File.separator + individual.getId() + ".bin"));
 		}
 	}
 	
 	/**
 	 * saves the simutation parameters.
 	 */
-	public void registerInformations() {
+	public void saveInformations() {
 		//create the needed folder
 		File settingsFile = new File(this.registrationFolder);
 		settingsFile.mkdirs();
@@ -184,8 +186,8 @@ public class NEATAlgorithm extends LearningAlgorithm{
 	
 	@Override
 	public void save() {
-		this.registerGeneration();
-		this.registerInformations();
+		this.saveGeneration();
+		this.saveInformations();
 	}
 	
 	@Override

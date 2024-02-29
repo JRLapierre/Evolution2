@@ -21,7 +21,7 @@ public class RunningTime implements RunningChoice {
 	/**
 	 * the moment where the simulation started to run
 	 */
-	long beginningTime = System.currentTimeMillis();
+	private long beginningTime = System.currentTimeMillis();
 	
 	/**
 	 * Constructor.

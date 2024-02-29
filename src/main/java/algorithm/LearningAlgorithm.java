@@ -12,6 +12,7 @@ import algorithm.autosave.NoAutoSave;
 import algorithm.autosave.SaveIteration;
 import algorithm.autosave.SaveTime;
 import algorithm.running_choice.*;
+import tools.Evaluation;
 
 /**
  * This class is the root for all learning algorithm. It manages the display and 
@@ -19,7 +20,7 @@ import algorithm.running_choice.*;
  * @author jrl
  *
  */
-public abstract class LearningAlgorithm extends Thread {
+public abstract class LearningAlgorithm implements Runnable {
 	
 	/***********************************************************************************/
 	/*                                variables                                        */
@@ -28,41 +29,46 @@ public abstract class LearningAlgorithm extends Thread {
 	/**
 	 * Instance of a functional interface to evaluate the population
 	 */
-	protected Evaluation evaluation;
+	protected transient Evaluation evaluation;
 	
 	/**
 	 * the name (and the path) of the folder that will contain the saves. <br>
 	 */
-	protected String registrationFolder;
+	protected transient String registrationFolder;
 	
 	// control parameters ---------------------------------------------------------------
 	
 	/**
+	 * Internal thread to control the program
+	 */
+	private transient Thread controlThread;
+	
+	/**
 	 * the way to run the simulation.
 	 */
-	private RunningChoice runningChoice = new DefaultRunning();
+	private transient RunningChoice runningChoice = new DefaultRunning();
 	
 	/**
 	 * the condition for automatically saving the simulation.
 	 */
-	private AutosaveCondition autosaveCondition = new NoAutoSave();
+	private transient AutosaveCondition autosaveCondition = new NoAutoSave();
 	
 	/**
 	 * the time passed in pause.
 	 */
-	private long timePaused;
+	private transient long timePaused;
 	
 	/**
 	 * This boolean is true as long as the simulation doesn't end. <br>
 	 * It is swiched to false when we want to stop the simulation.
 	 */
-	private boolean running = true;
+	private transient boolean running = true;
 	
 	/**
 	 * This boolean determines if the simulation is in pause or not. <br>
 	 * It is set to true when the simulation is paused.
 	 */
-	private boolean pause = true;
+	private transient boolean pause = true;
 	
 
 	/***********************************************************************************/
@@ -70,27 +76,40 @@ public abstract class LearningAlgorithm extends Thread {
 	/***********************************************************************************/
 	
 	/**
-	 * Method that allows us to pause and resume the program.
+	 * Method to launch the program
+	 * @return true if the program was sucessfully lauched
 	 */
-    public void playPause() {
-        if (pause) resumeProgram();
-        else pause=true;
+    public synchronized boolean start() {
+    	if (this.controlThread != null) return false;
+        this.controlThread = new Thread(this);
+        this.controlThread.start();
+        return true;
     }
-
+    
     /**
-     * Method that allows us to resume the program.
+     * Method to stop and kill the current program
+     * @return true if the program was successfully stoped.
      */
-    private synchronized void resumeProgram() {
-        pause = false;
-        notifyAll();
-    }
-
-    /**
-     * Method that allows us to kill the program.
-     */
-    public synchronized void endProgram() {
+    public synchronized boolean stop() {
+    	if (this.controlThread == null) return false;
         running = false;
         notifyAll();
+	    this.controlThread.interrupt();
+		this.controlThread = null;
+		return true;
+    }
+	
+    /**
+     * Method that allows us to switch between a state of playing and a state of pausing
+     * @return true if the program is now running
+     */
+    public synchronized boolean playPause() {
+        if (pause) {
+            pause = false;
+            notifyAll();
+        }
+        else pause = true;
+        return !pause;
     }
     
     /**

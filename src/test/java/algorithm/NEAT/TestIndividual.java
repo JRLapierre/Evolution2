@@ -2,7 +2,7 @@ package algorithm.NEAT;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.nio.ByteBuffer;
+import java.io.File;
 
 import org.junit.jupiter.api.Test;
 
@@ -75,14 +75,21 @@ class TestIndividual {
 		LayeredBrain.setDefaultLinkVariation(2);
 		Brain brain = new LayeredBrain(1,1,2,6);
 		Individual original = new Individual(brain);
-		ByteBuffer bb = ByteBuffer.wrap(original.toByte());
-		Individual copy = new Individual(bb);
+		//create a copy of the brain
+		//create the folder if it is not created
+		String folderName = "saves/test_individual";
+		File settingsFile = new File(folderName);
+		settingsFile.mkdirs();
+		//create the files for each individual
+		File copyFile = new File(folderName + "/" + original.getId() + ".bin");
+		original.save(copyFile);
+		Individual copy = new Individual(copyFile);
 		assertEquals(original.getId(), copy.getId());
 		assertEquals(original.getParentId(), copy.getParentId());
 		assertEquals(original.getParent2Id(), copy.getParent2Id());
 		assertEquals(original.getBrain().compute(new float[] {1})[0], 
 				copy.getBrain().compute(new float[] {1})[0]);
-		}
+	}
 	
 	@Test
 	void testIndividualScore() {

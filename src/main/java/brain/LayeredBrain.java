@@ -92,7 +92,7 @@ public class LayeredBrain extends Brain {
 	/**
 	 * array containing the values for each node
 	 */
-	private float[][] nodes;
+	private transient float[][] nodes;
 	
 	/**
 	 * array containing the value of the links between the nodes

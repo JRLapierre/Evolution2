@@ -1,7 +1,5 @@
 package simulation;
 
-import algorithm.Controller;
-import algorithm.Evaluation;
 import algorithm.LearningAlgorithm;
 import algorithm.NEAT.Individual;
 import algorithm.NEAT.NEATAlgorithm;
@@ -10,6 +8,8 @@ import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import algorithm.NEAT.reproduction.RouletteSelection;
 import brain.Brain;
 import brain.LayeredBrain;
+import tools.Controller;
+import tools.Evaluation;
 
 /**
  * This is the first simulation I will do. This will serve as a simple test to see if 
@@ -118,7 +118,7 @@ public class Simulation1 {
 	public static void main(String[] args) {
 		LearningAlgorithm algo = setInitialSimulation();
 		/*
-		 * arguments that can be set regardless of the simulation beeing new or restored 
+		 * Some arguments can be set regardless of the simulation beeing new or restored 
 		 * from a save.
 		 * For the brain, we have the method :
 		 *  - Brain.setMaxUsableCores(nbThreads)
@@ -135,19 +135,21 @@ public class Simulation1 {
 		Brain.setMaxUsableCores(3);
 		algo.setRunningTime(10000);
 		algo.setAutosaveTime(1000);
-		//creation of the controller for the algorithm
-		var controller = new Controller(algo);
 		/*
 		 * You can either control the algorithm in the code, or control it with a
 		 * graphical interface.
-		 * To use the algorithm in the code, you can use the following methods : 
-		 *  - startAlgorithm
-		 *  - playPause
+		 * To control the algorithm in the code, you can use the following methods : 
+		 *  - start
 		 *  - stop
-		 * To use the graphical interface, you can use openWindow. This method will open
-		 * a window with the necessary buttons to control the code manually.
+		 *  - playPause
+		 *  - isPaused
+		 * To use the graphical interface, you can use the controller class and the 
+		 * method openWindow. This method will open a window with the necessary buttons 
+		 * to control the code manually.
 		 */
+		var controller = new Controller(algo);
 		controller.openWindow();
+
 	}
 	
 }

@@ -1,6 +1,10 @@
 package algorithm.NEAT;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 
 import brain.Brain;
 
@@ -110,14 +114,22 @@ public class Individual {
 	}
 	
 	/**
-	 * Constructor from a save
-	 * @param bb the ByteBuffer containing the informations
+	 * Constructor from a saved file
+	 * @param file the file containing the binary save
 	 */
-	public Individual(ByteBuffer bb) {
-		this.id = bb.getInt();
-		this.parentId = bb.getInt();
-		this.parent2Id = bb.getInt();
-		this.brain = Brain.restore(bb);
+	public Individual(File file) {
+		ByteBuffer bb;
+		try {
+			bb = ByteBuffer.wrap(Files.readAllBytes(file.toPath()));
+			this.id = bb.getInt();
+			this.parentId = bb.getInt();
+			this.parent2Id = bb.getInt();
+			this.brain = Brain.restore(bb);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
 	}
 	
 	/***********************************************************************************/
@@ -190,7 +202,22 @@ public class Individual {
 		bb.putInt(parent2Id);
 		bb.put(bytesBrain);
 		return bb.array();
-		
+	}
+	
+	/**
+	 * Function to save an individual in binary format.
+	 * @param fileName the name of the file that will contain the individual.
+	 */
+	public void save(File fileName) {
+		try {
+			FileOutputStream fos = new FileOutputStream(fileName);
+        	fos.write(this.toByte()); 
+        	fos.flush();
+        	fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+	        System.exit(1);
+		}
 	}
 
 }
