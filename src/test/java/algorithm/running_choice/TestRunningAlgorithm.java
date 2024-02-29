@@ -70,7 +70,7 @@ class TestRunningAlgorithm {
 			e.printStackTrace();
 		}
 		assertFalse(choice.runningCondition());
-		algo.interrupt();
+		algo.stop();
 	}
 
 }

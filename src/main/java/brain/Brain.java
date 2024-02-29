@@ -27,7 +27,7 @@ public abstract class Brain {
 	/**
 	 * the source of random numbers for the mutations.
 	 */
-	protected Random random = new Random();
+	protected static Random random = new Random();
 	
 	/**
 	 * boolean to decide if we track the mutations or not.

@@ -1,4 +1,4 @@
-package algorithm.NEAT;
+package algorithm;
 
 /**
  * This class is a simplified version of the Individual class used for the genealogy.

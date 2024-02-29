@@ -40,7 +40,7 @@ public class FlexibleBrain extends Brain {
 		/**
 		 * this is the value contained in the node
 		 */
-		protected float value = 0f;
+		protected transient float value = 0f;
 		
 		/**
 		 * This method reset the value of a node, setting it to 0.
@@ -84,7 +84,7 @@ public class FlexibleBrain extends Brain {
 		/**
 		 * the value of the signal travelling
 		 */
-		private float value = 0;
+		private transient float value = 0;
 		
 		/**
 		 * the constructor for a link. It takes the two extremities of the signal 

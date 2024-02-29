@@ -86,13 +86,7 @@ public class Controller {
 	 * This function contains the code to proprely end the program.
 	 */
 	public void stop() {
-		algorithm.endProgram();
-		try {
-		    algorithm.join();
-		} catch (InterruptedException e) {
-		    e.printStackTrace();
-		    algorithm.interrupt();
-		}
+		algorithm.stop();
 		window.dispose();
 	}
 	
@@ -102,7 +96,6 @@ public class Controller {
 	public void playPause() {
     	algorithm.playPause();
     	if (algorithm.isPaused()) {
-    		while (algorithm.getState() != Thread.State.WAITING);
     		textArea.setText("program paused");
     	} else {
     		textArea.setText("program running...");

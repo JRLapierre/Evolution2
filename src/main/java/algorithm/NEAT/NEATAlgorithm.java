@@ -4,13 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Comparator;
-
-import com.google.gson.annotations.Expose;
 
 import algorithm.Evaluation;
 import algorithm.LearningAlgorithm;
@@ -31,8 +26,7 @@ public class NEATAlgorithm extends LearningAlgorithm {
 	/**
 	 * an array containing the population
 	 */
-	@Expose
-	private Individual[] population;
+	private transient Individual[] population;
 	
 	/**
 	 * chosen reproduction algorithm
@@ -68,6 +62,7 @@ public class NEATAlgorithm extends LearningAlgorithm {
 	/**
 	 * Constructor to restore from save.
 	 * @param folder the folder containing the saves
+	 * @param settings binary information about the simulation
 	 */
 	public NEATAlgorithm(String folder, ByteBuffer settings) {
 		//settings file
@@ -95,45 +90,6 @@ public class NEATAlgorithm extends LearningAlgorithm {
 			savedPopulation[i] = new Individual(individuals[i]);
 		}
 		return savedPopulation;
-	}
-	
-	/**
-	 * Function that restores a saved generation
-	 * @param file the file to be read
-	 * @return an array of partial individuals
-	 */
-	private static PartialIndividual[] restoreSimplifiedGeneration(File file) {
-		try {
-			byte[] datas = Files.readAllBytes(file.toPath());
-			int nbIndividuals = datas.length/12; //determine the number of individuals
-			PartialIndividual[] savedPopulation = new PartialIndividual[nbIndividuals];
-			ByteBuffer bb = ByteBuffer.wrap(datas);
-			for (int i = 0; i < nbIndividuals; i++) {
-				savedPopulation[i] = new PartialIndividual(bb.getInt(), bb.getInt(), bb.getInt());
-			}
-			return savedPopulation;
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		return new PartialIndividual[0]; //should never happend
-
-	}
-	
-	/**
-	 * Function that generate a two-dimentionnal array
-	 * @param folder the folder containing the genealogy
-	 * @return a two-dimentionnal array containing the informations about
-	 */
-	public static PartialIndividual[][] restoreGenealogy(String folder) {
-		File[] files=new File(folder).listFiles();
-		Arrays.sort(files, Comparator.comparing(File::getName));
-		PartialIndividual[][] genealogy = new PartialIndividual[files.length][];
-		//for each file
-		for (int i = 0; i < genealogy.length; i++) {
-			genealogy[i] = NEATAlgorithm.restoreSimplifiedGeneration(files[i]);
-		}
-		return genealogy;
 	}
 	
 	/***********************************************************************************/

@@ -20,7 +20,12 @@ public abstract class ReproductionAlgorithm {
 	/**
 	 * generator of random numbers
 	 */
-	protected Random random = new Random();
+	protected static Random random = new Random();
+	
+	/**
+	 * The name of the algorithm used.
+	 */
+	public final String algorithmName = this.getClass().getSimpleName();
 	
 	/**
 	 * a value to choose if we do the changeRandomLinkFactor mutation or not. 
