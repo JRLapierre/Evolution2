@@ -1,6 +1,6 @@
 <h1> Evolution2 </h1>
 
-Version 1.8
+Version 1.9
 
 this is my second neural network project. In this project, I want to make a structure that is more optimized and open to new features than the last. <br>
 
@@ -9,6 +9,13 @@ I made two models of neral network (see package brain), one learning algorithm a
 I just do that for fun, so feel free to use this however you like.
 
 <h2> version history </h2>
+
+<h4> 1.9 </h4>
+
+- addition of a possibility of exportation using json format
+- creation of a package tools
+- refactor of the thread management in LearningAlgorithm
+/!\ The changes made in LearningAlgorithm and Controller will break a program made before this version.
 
 <h4> 1.8 </h4>
 
