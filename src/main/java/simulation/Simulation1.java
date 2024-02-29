@@ -1,7 +1,5 @@
 package simulation;
 
-import algorithm.Controller;
-import algorithm.Evaluation;
 import algorithm.LearningAlgorithm;
 import algorithm.NEAT.Individual;
 import algorithm.NEAT.NEATAlgorithm;
@@ -10,6 +8,8 @@ import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import algorithm.NEAT.reproduction.RouletteSelection;
 import brain.Brain;
 import brain.LayeredBrain;
+import tools.Controller;
+import tools.Evaluation;
 
 /**
  * This is the first simulation I will do. This will serve as a simple test to see if 

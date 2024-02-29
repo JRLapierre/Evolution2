@@ -1,4 +1,4 @@
-package algorithm;
+package tools;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +23,8 @@ import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 import brain.FlexibleBrain;
 import brain.LayeredBrain;
+import tools.JsonExport;
+import tools.PartialIndividual;
 
 class TestJsonExportable {
 	
@@ -64,7 +66,7 @@ class TestJsonExportable {
 		listTest.add("a third string");
 		//save the object and get back the data
 		String filePath = testFolder + File.separator + "linkedList.json";
-		JsonExportable.saveObject(listTest, filePath);
+		JsonExport.saveObject(listTest, filePath);
 		try {
 			String content = String.join(System.lineSeparator(), Files.readAllLines(Paths.get(filePath)));
 			assertEquals(gson.toJson(listTest), content);
@@ -87,7 +89,7 @@ class TestJsonExportable {
 		String jsonFileName = testFolder + File.separator + "individual.json";
 		individual.save(new File(binFileName));
 		//restore and compare
-		JsonExportable.exportIndividual(binFileName, jsonFileName);
+		JsonExport.exportIndividual(binFileName, jsonFileName);
 		try {
 			String content = String.join(System.lineSeparator(), Files.readAllLines(Paths.get(jsonFileName)));
 			assertEquals(gson.toJson(individual), content);
@@ -118,7 +120,7 @@ class TestJsonExportable {
 			individual.save(new File(binFolder + File.separator + individual.getId() + ".bin"));
 		}
 		//export, restore and compare
-		JsonExportable.exportGeneration(binFolder, jsonFolder);
+		JsonExport.exportGeneration(binFolder, jsonFolder);
 		try {
 			for (Individual individual : population) {
 				String fileName = jsonFolder + File.separator + individual.getId() + ".json";
@@ -145,7 +147,7 @@ class TestJsonExportable {
 			algo.next();
 		}
 		//create the json version
-		JsonExportable.exportGenealogy(
+		JsonExport.exportGenealogy(
 				binFolderName + File.separator + "generations", 
 				jsonFileName);
 		File jsonFile = new File(jsonFileName);
@@ -167,7 +169,7 @@ class TestJsonExportable {
 			algo.saveGenealogy();
 			algo.next();
 		}
-		PartialIndividual[][] restoredGenealogy = JsonExportable.restoreGenealogy(binFolderName + File.separator + "generations");
+		PartialIndividual[][] restoredGenealogy = JsonExport.restoreGenealogy(binFolderName + File.separator + "generations");
 		for (int i = 0; i < 3; i++) {
 			assertEquals(populations[i].length, restoredGenealogy[i].length);
 			for (int j = 0; j < populations[i].length; j++) {
@@ -191,8 +193,8 @@ class TestJsonExportable {
 			algo.saveGenealogy();
 			algo.next();
 		}
-		JsonExportable.exportSimulation(binFolderName, jsonFolderName, true);
-		JsonExportable.exportSimulation(binFolderName, jsonPartialFolderName, false);
+		JsonExport.exportSimulation(binFolderName, jsonFolderName, true);
+		JsonExport.exportSimulation(binFolderName, jsonPartialFolderName, false);
 		
 	}
 

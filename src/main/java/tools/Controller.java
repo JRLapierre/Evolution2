@@ -1,4 +1,4 @@
-package algorithm;
+package tools;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+
+import algorithm.LearningAlgorithm;
 
 /**
  * This class allow us to display information about our simulation and control the pause 

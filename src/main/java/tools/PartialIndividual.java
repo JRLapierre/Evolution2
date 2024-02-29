@@ -1,4 +1,4 @@
-package algorithm;
+package tools;
 
 /**
  * This class is a simplified version of the Individual class used for the genealogy.
@@ -6,7 +6,7 @@ package algorithm;
  * @author jrl
  *
  */
-public class PartialIndividual {
+class PartialIndividual {
 
 	/***********************************************************************************/
 	/*                                variables                                        */

@@ -11,13 +11,13 @@ import java.util.Comparator;
 
 import org.junit.jupiter.api.Test;
 
-import algorithm.Evaluation;
 import algorithm.LearningAlgorithm;
 import algorithm.NEAT.reproduction.Elitism;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import algorithm.NEAT.reproduction.RouletteSelection;
 import brain.Brain;
 import brain.LayeredBrain;
+import tools.Evaluation;
 
 class TestNEATAlgorithm {
 	

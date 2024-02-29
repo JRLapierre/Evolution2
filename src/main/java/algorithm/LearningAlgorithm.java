@@ -12,6 +12,7 @@ import algorithm.autosave.NoAutoSave;
 import algorithm.autosave.SaveIteration;
 import algorithm.autosave.SaveTime;
 import algorithm.running_choice.*;
+import tools.Evaluation;
 
 /**
  * This class is the root for all learning algorithm. It manages the display and 

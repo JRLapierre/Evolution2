@@ -7,10 +7,10 @@ import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import algorithm.Evaluation;
 import algorithm.LearningAlgorithm;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import brain.Brain;
+import tools.Evaluation;
 
 /**
  * This class is the basis for a NEAT algorithm.

@@ -1,4 +1,4 @@
-package algorithm;
+package tools;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,6 +10,7 @@ import java.util.Comparator;
 
 import com.google.gson.Gson;
 
+import algorithm.LearningAlgorithm;
 import algorithm.NEAT.Individual;
 import algorithm.NEAT.NEATAlgorithm;
 
@@ -19,7 +20,7 @@ import algorithm.NEAT.NEATAlgorithm;
  * @author jrl
  *
  */
-public interface JsonExportable {
+public interface JsonExport {
 	
 	/**
 	 * Gson object allowing us to create json from our objects
@@ -93,7 +94,7 @@ public interface JsonExportable {
 	 */
 	public static void exportIndividual(String src, String target) {
 		Individual individual = new Individual(new File(src));
-		JsonExportable.saveObject(individual, target);
+		JsonExport.saveObject(individual, target);
 	}
 	
 	/**
@@ -107,7 +108,7 @@ public interface JsonExportable {
 		new File(target).mkdirs();
 		for (File file : files) {
 			Individual individual = new Individual(file);
-			JsonExportable.saveObject(individual, 
+			JsonExport.saveObject(individual, 
 					target + File.separator + individual.getId() + ".json");		}
 	}
 	
@@ -120,7 +121,7 @@ public interface JsonExportable {
 	 */
 	public static void exportGenealogy(String src, String target) {
 		PartialIndividual[][] genealogy = restoreGenealogy(src);
-		JsonExportable.saveObject(genealogy, target);
+		JsonExport.saveObject(genealogy, target);
 	}
 	
 	/**
@@ -139,11 +140,11 @@ public interface JsonExportable {
 			NEATAlgorithm neatAlgorithm) {
 		// save the genealogy
 		File srcFolder = new File(src);
-		JsonExportable.exportGenealogy(src + File.separator + "generations", target + File.separator + "genealogy.json");
+		JsonExport.exportGenealogy(src + File.separator + "generations", target + File.separator + "genealogy.json");
 		if (fullSave) { //to export all the saves
 			File[] generationFolders = srcFolder.listFiles(file -> file.isDirectory() && file.getName().startsWith("generation_"));
 			for (File folder : generationFolders) {
-				JsonExportable.exportGeneration(folder.getPath(), target + File.separator + folder.getName());
+				JsonExport.exportGeneration(folder.getPath(), target + File.separator + folder.getName());
 			}
 		}
 		else {
@@ -151,7 +152,7 @@ public interface JsonExportable {
 			String generationFolder = target + File.separator + "generation_" + neatAlgorithm.getNumGeneration();
 			new File(generationFolder).mkdirs();
 			for (Individual individual : neatAlgorithm.getPopulation()) {
-				JsonExportable.saveObject(individual, 
+				JsonExport.saveObject(individual, 
 						generationFolder + File.separator + individual.getId() + ".json");
 			}
 		}
@@ -169,7 +170,7 @@ public interface JsonExportable {
 		File targetFolder = new File(target);
 		targetFolder.mkdirs();
 		// save the setings
-		JsonExportable.saveObject(simulation, target + File.separator + "settings.json");
+		JsonExport.saveObject(simulation, target + File.separator + "settings.json");
 		if (simulation instanceof NEATAlgorithm neatAlgorithm) {
 			exportNeatAlgorithm(src, target, fullSave, neatAlgorithm);
 		}
