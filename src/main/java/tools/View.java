@@ -13,12 +13,12 @@ import javax.swing.JTextArea;
 import algorithm.LearningAlgorithm;
 
 /**
- * This class allow us to display information about our simulation and control the pause 
- * and the stopping of the program.
+ * This class allow us to display information about our simulation via a graphical 
+ * interface
  * @author jrl
  *
  */
-public class Controller {
+public class View {
 	
 	/***********************************************************************************/
 	/*                             Display objects                                     */
@@ -76,42 +76,13 @@ public class Controller {
 	 * Constructor for the controller
 	 * @param algorithm the learning algorithm that will be used
 	 */
-	public Controller(LearningAlgorithm algorithm) {
+	public View(LearningAlgorithm algorithm) {
 		this.algorithm = algorithm;
 	}
 	
 	/***********************************************************************************/
 	/*                                  functions                                      */
 	/***********************************************************************************/
-	
-	/**
-	 * This function contains the code to proprely end the program.
-	 */
-	public void stop() {
-		algorithm.stop();
-		window.dispose();
-	}
-	
-	/**
-	 * This function contains the pause to proprely pause and resume the program.
-	 */
-	public void playPause() {
-    	algorithm.playPause();
-    	if (algorithm.isPaused()) {
-    		textArea.setText("program paused");
-    	} else {
-    		textArea.setText("program running...");
-    	}
-	}
-	
-	/**
-	 * Function to start the learning algorithm from the code. <br>
-	 * The program will start immediately.
-	 */
-	public void startAlgorithm() {
-		this.algorithm.start();
-		this.playPause();
-	}
 	
 	/**
 	 * This private function sets up the interraction of the buttons
@@ -121,13 +92,23 @@ public class Controller {
 		window.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-            	stop();
-            }
+        		algorithm.stop();
+        		window.dispose();
+        	}
         });
 		//stop button
-		stop.addActionListener(e -> stop());
+		stop.addActionListener(e -> {
+			algorithm.stop();
+			window.dispose();
+		});
 		//play/pause button
-		playPause.addActionListener(e -> playPause());
+		playPause.addActionListener(e -> {
+	    	if (algorithm.playPause()) {
+	    		textArea.setText("program running...");
+	    	} else {
+	    		textArea.setText("program paused");
+	    	}
+		});
 	}
 	
 	/**
@@ -143,7 +124,7 @@ public class Controller {
         mainPanel.add(textArea);
         buttonsPanel.add(playPause);
         buttonsPanel.add(stop);
-        //others elements
+        //other elements
         textArea.setEditable(false);
         //display the window
         window.add(mainPanel);

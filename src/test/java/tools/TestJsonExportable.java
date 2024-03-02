@@ -23,8 +23,6 @@ import algorithm.NEAT.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 import brain.FlexibleBrain;
 import brain.LayeredBrain;
-import tools.JsonExport;
-import tools.PartialIndividual;
 
 class TestJsonExportable {
 	

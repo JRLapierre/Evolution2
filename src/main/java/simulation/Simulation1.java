@@ -5,10 +5,9 @@ import algorithm.NEAT.Individual;
 import algorithm.NEAT.NEATAlgorithm;
 import algorithm.NEAT.reproduction.Elitism;
 import algorithm.NEAT.reproduction.ReproductionAlgorithm;
-import algorithm.NEAT.reproduction.RouletteSelection;
 import brain.Brain;
 import brain.LayeredBrain;
-import tools.Controller;
+import tools.View;
 import tools.Evaluation;
 
 /**
@@ -143,12 +142,12 @@ public class Simulation1 {
 		 *  - stop
 		 *  - playPause
 		 *  - isPaused
-		 * To use the graphical interface, you can use the controller class and the 
+		 * To use the graphical interface, you can use the View class and the 
 		 * method openWindow. This method will open a window with the necessary buttons 
 		 * to control the code manually.
 		 */
-		var controller = new Controller(algo);
-		controller.openWindow();
+		var view = new View(algo);
+		view.openWindow();
 
 	}
 	
