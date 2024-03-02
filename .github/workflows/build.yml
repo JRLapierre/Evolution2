@@ -19,4 +19,4 @@ jobs:
 
 
     - name: Build with Gradle
-      run: ../../gradle/wrapper/gradlew build
+      run: ../gradle/wrapper/gradlew build
