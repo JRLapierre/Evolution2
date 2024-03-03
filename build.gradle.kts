@@ -27,5 +27,9 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.test {
+    useJUnitPlatform()
     exclude("**/TestAutosave.testSaveTime")
 }
