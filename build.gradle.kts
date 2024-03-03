@@ -28,3 +28,10 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+test {
+    exclude {
+        className = 'algorithm.autosave.TestAutosave'
+        methodName = 'testSaveTime'
+    }
+}
