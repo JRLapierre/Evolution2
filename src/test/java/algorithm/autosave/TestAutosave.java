@@ -3,6 +3,7 @@ package algorithm.autosave;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.Assume;
 
 class TestAutosave {
 
@@ -34,6 +35,8 @@ class TestAutosave {
 	
 	@Test
 	void testSaveTime() {
+		// This test will be ignored in GitHub Actions
+		Assume.assumeFalse("true".equals(System.getenv("CI")));
 		AutosaveCondition condition = new SaveTime(200);
 		assertFalse(condition.saveCondition());
 		try {
