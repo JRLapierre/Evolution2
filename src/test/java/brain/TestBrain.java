@@ -125,7 +125,7 @@ class TestBrain {
 		//test change random link value
 		b3.changeRandomLinkFactor(50);
 		results = b3.compute(input);
-		assertFalse(2f == results[1]);
+		assertNotEquals(2f, results[1]);
 	}
 	
 	@Test
@@ -283,10 +283,10 @@ class TestBrain {
 		LayeredBrain.setDefaultLinkValue(1);
 		LayeredBrain b2 = new LayeredBrain(1, 1, 0, 0);
 		outputs = b2.compute(new float[] {1});
-		assertTrue(outputs[0] == 1);
+		assertEquals(1, outputs[0]);
 		b2.changeRandomLinkFactor(50);
 		outputs = b2.compute(new float[] {1});
-		assertFalse(outputs[0] == 1);
+		assertNotEquals(1, outputs[0]);
 		
 		assertTrue(b2.mutations.get(0) instanceof MutationLinkFactor);
 		assertEquals(0, ((MutationLinkFactor) b2.mutations.get(0)).getOriginArray());

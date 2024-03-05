@@ -1,4 +1,4 @@
-package algorithm.NEAT;
+package algorithm.neat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import algorithm.LearningAlgorithm;
-import algorithm.NEAT.reproduction.ReproductionAlgorithm;
+import algorithm.neat.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 import tools.Evaluation;
 
@@ -166,7 +166,8 @@ public class NEATAlgorithm extends LearningAlgorithm {
 		settingsFile.mkdirs();
 		//informations about the reproductionAlgorithm
 		byte[] reproductionSettings = this.reproductionAlgorithm.toByte();
-		ByteBuffer bb = ByteBuffer.allocate(reproductionSettings.length + 9);
+		ByteBuffer bb = ByteBuffer.allocate(
+				reproductionSettings.length + 9);
 		bb.put((byte) 1); //1 for the NEATAlgorithm
 		bb.put(reproductionSettings);
 		bb.putInt(numGeneration);

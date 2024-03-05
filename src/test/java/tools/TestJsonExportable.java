@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 
-import algorithm.NEAT.Individual;
-import algorithm.NEAT.NEATAlgorithm;
-import algorithm.NEAT.reproduction.Elitism;
-import algorithm.NEAT.reproduction.ReproductionAlgorithm;
+import algorithm.neat.Individual;
+import algorithm.neat.NEATAlgorithm;
+import algorithm.neat.reproduction.Elitism;
+import algorithm.neat.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 import brain.FlexibleBrain;
 import brain.LayeredBrain;
@@ -38,8 +38,8 @@ class TestJsonExportable {
 		}
 		//set up the reproduction algo (not important)
 		ReproductionAlgorithm reproductionAlgorithm = new Elitism(0, 5, 5, 10);
-		reproductionAlgorithm.setAddLink(2, 3);
-		reproductionAlgorithm.setDeleteLink(2);
+		reproductionAlgorithm.getMutationManager().setAddLink(2.1f, 3);
+		reproductionAlgorithm.getMutationManager().setDeleteLink(2);
 		//lambda expression
 		Evaluation evaluation = population -> {
 			//does nothing and it's fine for this test

@@ -1,6 +1,6 @@
 package tools;
 
-import algorithm.NEAT.Individual;
+import algorithm.neat.Individual;
 
 /**
  * This functional interface allows us to evaluate a population and set the scores.

@@ -1,10 +1,10 @@
 package simulation;
 
 import algorithm.LearningAlgorithm;
-import algorithm.NEAT.Individual;
-import algorithm.NEAT.NEATAlgorithm;
-import algorithm.NEAT.reproduction.Elitism;
-import algorithm.NEAT.reproduction.ReproductionAlgorithm;
+import algorithm.neat.Individual;
+import algorithm.neat.NEATAlgorithm;
+import algorithm.neat.reproduction.Elitism;
+import algorithm.neat.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 import brain.LayeredBrain;
 import tools.View;
@@ -98,9 +98,9 @@ public class Simulation1 {
 		 *  setChangeLinkFactor, setAddNode and setDeleteNode will have an effect on the
 		 *  LayeredBrain.
 		 */
-		reproduction.setAddNode(5);
-		reproduction.setChangeLinkFactor(5, 0.5f);
-		reproduction.setDeleteNode(5);
+		reproduction.getMutationManager().setAddNode(0.2f);
+		reproduction.getMutationManager().setChangeLinkFactor(1.1f, 0.5f);
+		reproduction.getMutationManager().setDeleteNode(0.2f);
 		return algo;
 	}
 	

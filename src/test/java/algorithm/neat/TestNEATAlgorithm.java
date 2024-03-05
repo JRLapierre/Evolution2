@@ -1,4 +1,4 @@
-package algorithm.NEAT;
+package algorithm.neat;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,9 +12,9 @@ import java.util.Comparator;
 import org.junit.jupiter.api.Test;
 
 import algorithm.LearningAlgorithm;
-import algorithm.NEAT.reproduction.Elitism;
-import algorithm.NEAT.reproduction.ReproductionAlgorithm;
-import algorithm.NEAT.reproduction.RouletteSelection;
+import algorithm.neat.reproduction.Elitism;
+import algorithm.neat.reproduction.ReproductionAlgorithm;
+import algorithm.neat.reproduction.RouletteSelection;
 import brain.Brain;
 import brain.LayeredBrain;
 import tools.Evaluation;
@@ -100,9 +100,9 @@ class TestNEATAlgorithm {
 		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, null);
 		algo.setRegistrationFolderName("saves/testDataRecuperation");
 		//set some random things for more cahos
-		reproduction.setAddNode(5);
-		reproduction.setChangeLinkFactor(5, 0.5f);
-		reproduction.setDeleteNode(5);
+		reproduction.getMutationManager().setAddNode(0.2f);
+		reproduction.getMutationManager().setChangeLinkFactor(0.2f, 0.5f);
+		reproduction.getMutationManager().setDeleteNode(0.2f);
 		algo.reproduce();
 		algo.saveGeneration();
 		algo.saveInformations();
@@ -147,9 +147,9 @@ class TestNEATAlgorithm {
 		Brain brain = new LayeredBrain(1,1,2,2);
 		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, evaluation);
 		//set some mutations
-		reproduction.setAddNode(5);
-		reproduction.setChangeLinkFactor(5, 0.5f);
-		reproduction.setDeleteNode(5);
+		reproduction.getMutationManager().setAddNode(0.2f);
+		reproduction.getMutationManager().setChangeLinkFactor(0.2f, 0.5f);
+		reproduction.getMutationManager().setDeleteNode(0.2f);
 		algo.reproduce();
 		float bestScore = -10;
 		for (int i = 0; i < 10; i++) {
@@ -184,10 +184,10 @@ class TestNEATAlgorithm {
 		Brain brain = new LayeredBrain(1,5,5,5);
 		NEATAlgorithm algo = new NEATAlgorithm(brain, reproduction, evaluation);
 		algo.setRegistrationFolderName("saves/testGenealogy");
-		//set some random things for more cahos
-		reproduction.setAddNode(5);
-		reproduction.setChangeLinkFactor(5, 0.5f);
-		reproduction.setDeleteNode(5);
+		//set some random things for more chaos
+		reproduction.getMutationManager().setAddNode(0.2f);
+		reproduction.getMutationManager().setChangeLinkFactor(0.2f, 0.5f);
+		reproduction.getMutationManager().setDeleteNode(0.2f);
 		//check for each generation
 		for (int i = 0; i < 3; i++) {
 			algo.saveGenealogy();

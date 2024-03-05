@@ -11,8 +11,8 @@ import java.util.Comparator;
 import com.google.gson.Gson;
 
 import algorithm.LearningAlgorithm;
-import algorithm.NEAT.Individual;
-import algorithm.NEAT.NEATAlgorithm;
+import algorithm.neat.Individual;
+import algorithm.neat.NEATAlgorithm;
 
 /**
  * This interface allows the exportation of objects and saves in a json format.

@@ -1,4 +1,4 @@
-package algorithm.NEAT;
+package algorithm.neat;
 
 import java.io.File;
 import java.io.FileOutputStream;
