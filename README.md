@@ -1,6 +1,6 @@
 <h1> Evolution2 </h1>
 
-Version 1.10.1
+Version 1.11
 
 this is my second neural network project. In this project, I want to make a structure that is more optimized and open to new features than the last. <br>
 
@@ -9,6 +9,15 @@ I made two models of neral network (see package brain), one learning algorithm a
 I just do that for fun, so feel free to use this however you like.
 
 <h2> version history </h2>
+
+<h5> 1.11 </h5>
+
+Refactor of the project :   
+- extraction of a MutationManagement class from the ReproductionAlgorithm class
+- changement in packages names from NEAT to neat
+- changement of the management of the mutations
+
+/!\ The changes made will require an update if you had already used a previous version of this project
 
 <h4> 1.10.1 </h4>
 
