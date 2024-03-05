@@ -7,8 +7,6 @@ import java.nio.ByteBuffer;
 import org.junit.jupiter.api.Test;
 
 import algorithm.NEAT.Individual;
-import brain.Brain;
-import brain.FlexibleBrain;
 import brain.LayeredBrain;
 
 class TestReproductionAlgorithm {
@@ -21,12 +19,12 @@ class TestReproductionAlgorithm {
 		Individual[] result = algo.reproduce(population);
 		assertEquals(30, result.length);
 		for (int i = 0; i<result.length; i++) {
-			assertTrue(result[i] != null);
+			assertNotNull(result[i]);
 		}
 		Individual[] result2 = algo.reproduce(result);
 		assertEquals(30, result2.length);
 		for (int i = 0; i<result2.length; i++) {
-			assertTrue(result2[i] != null);
+			assertNotNull(result2[i]);
 		}
 	}
 	
@@ -38,12 +36,12 @@ class TestReproductionAlgorithm {
 		Individual[] result = algo.reproduce(population);
 		assertEquals(30, result.length);
 		for (int i = 0; i<result.length; i++) {
-			assertTrue(result[i] != null);
+			assertNotNull(result[i]);
 		}
 		Individual[] result2 = algo.reproduce(result);
 		assertEquals(30, result2.length);
 		for (int i = 0; i<result2.length; i++) {
-			assertTrue(result2[i] != null);
+			assertNotNull(result2[i]);
 		}
 	}
 	
