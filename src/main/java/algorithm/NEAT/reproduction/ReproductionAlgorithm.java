@@ -28,58 +28,76 @@ public abstract class ReproductionAlgorithm {
 	public final String algorithmName = this.getClass().getSimpleName();
 	
 	/**
-	 * a value to choose if we do the changeRandomLinkFactor mutation or not. 
-	 * If the value is at 0, the mutation will never append. Otherwise, the higher the 
-	 * value, the less likely the mutation is to happend.
+	 * The number of guarandeed changement of factor of a link
 	 */
-	private int changeLinkFactor;
+	private int nbChangesLinkFactor;
+	
+	/**
+	 * The probability of an additional changement of a factor of a link
+	 */
+	private float chanceAdditionalChangeLinkFactor;
 	
 	/**
 	 * In case of changeRandomLinkFactor mutation, this is the maximum (and the minimum)
 	 * that the change of factor can be.
 	 */
-	private float minMaxChange = 0.000000001f;
+	private float minMaxChange = Float.MIN_NORMAL;
 	
 	/**
-	 * a value to choose if we do the changeRandomLinkExtremity mutation or not. 
-	 * If the value is at 0, the mutation will never append. Otherwise, the higher the 
-	 * value, the less likely the mutation is to happend.
+	 * The number of guarandeed changement of an extremity of a link
 	 */
-	private int changeLinkExtremity;
+	private int nbChangeLinkExtremity;
 	
 	/**
-	 * a value to choose if we do the addRandomNode mutation or not. 
-	 * If the value is at 0, the mutation will never append. Otherwise, the higher the 
-	 * value, the less likely the mutation is to happend.
+	 * The probability of an additional changement of an extremity of a link
 	 */
-	private int addNode;
+	private float chanceAdditionalChangeLinkExtremity;
 	
 	/**
-	 * a value to choose if we do the addRandomLink mutation or not. 
-	 * If the value is at 0, the mutation will never append. Otherwise, the higher the 
-	 * value, the less likely the mutation is to happend.
+	 * The number of guarandeed additions of nodes
 	 */
-	private int addLink;
+	private int nbAddNode;
+	
+	/**
+	 * The probability of an additional addition of a node
+	 */
+	private float chanceAdditionalAddNode;
+	
+	/**
+	 * The number of guarandeed additions of links
+	 */
+	private int nbAddLink;
+	
+	/**
+	 * The probability of an additional addition of a link
+	 */
+	private float chanceAdditionalAddLink;
 	
 	/**
 	 * In case of addRandomLink mutation, this is the maximum (and the minimum) that the 
 	 * factor can be.
 	 */
-	private float minMaxFactor = 0.00000001f;
+	private float minMaxFactor = Float.MIN_NORMAL;
 	
 	/**
-	 * a value to choose if we do the deleteRandomNode mutation or not. 
-	 * If the value is at 0, the mutation will never append. Otherwise, the higher the 
-	 * value, the less likely the mutation is to happend.
+	 * The number of guarandeed deletion of nodes
 	 */
-	private int deleteNode;
+	private int nbDeleteNode;
 	
 	/**
-	 * a value to choose if we do the deleteRandomLink mutation or not. 
-	 * If the value is at 0, the mutation will never append. Otherwise, the higher the 
-	 * value, the less likely the mutation is to happend.
+	 * The probability of an additional deletion of a node
 	 */
-	private int deleteLink;
+	private float chanceAdditionalDeleteNode;
+	
+	/**
+	 * The number of guarandeed deletions of links
+	 */
+	private int nbDeleteLink;
+	
+	/**
+	 * The probability of an additional deletion of a link
+	 */
+	private float chanceAdditionalDeleteLink;
 	
 	/***********************************************************************************/
 	/* 									setters                                        */
@@ -88,67 +106,79 @@ public abstract class ReproductionAlgorithm {
 	/**
 	 * setter for the changeLinkFactor mutation. <br>
 	 * Negative values are not allowed.
-	 * @param changeLinkFactor the bigger the number, the less frequentely the mutation
-	 * will append.
+	 * @param nbChanges the number of mutation of that kind that will happend. <br>
+	 * the integer part will be the number of times this mutation will certainely happend <br>
+	 * the decimal part will be a probability of an additional mutation.
 	 * @param minMaxChange In case of mutation, this is the maximum (and the minimum)
 	 * that the change of factor can be.
 	 */
-	public void setChangeLinkFactor(int changeLinkFactor, float minMaxChange) {
-		this.changeLinkFactor = (changeLinkFactor < 0) ? 0 : changeLinkFactor;
+	public void setChangeLinkFactor(float nbChanges, float minMaxChange) {
+		this.nbChangesLinkFactor = (int) nbChanges;
+		this.chanceAdditionalChangeLinkFactor = nbChanges % 1;
 		this.minMaxChange = (minMaxChange < 0) ? this.minMaxChange : minMaxChange;
 	}
 	
 	/**
 	 * setter for the changeLinkExtremity mutation. <br>
 	 * Negative values are not allowed.
-	 * @param changeLinkExtremity the bigger the number, the less frequentely the mutation
-	 * will append.
+	 * @param nbChanges the number of mutation of that kind that will happend. <br>
+	 * the integer part will be the number of times this mutation will certainely happend <br>
+	 * the decimal part will be a probability of an additional mutation.
 	 */
-	public void setChangeLinkExtremity(int changeLinkExtremity) {
-		this.changeLinkExtremity = (changeLinkExtremity < 0) ? 0 : changeLinkExtremity;
+	public void setChangeLinkExtremity(float nbChanges) {
+		this.nbChangeLinkExtremity = (int) nbChanges;
+		this.chanceAdditionalChangeLinkExtremity = nbChanges % 1;
 	}
 	
 	/**
 	 * setter for the addNode mutation. <br>
 	 * Negative values are not allowed.
-	 * @param addNode the bigger the number, the less frequentely the mutation
-	 * will append.
+	 * @param nbChanges the number of mutation of that kind that will happend. <br>
+	 * the integer part will be the number of times this mutation will certainely happend <br>
+	 * the decimal part will be a probability of an additional mutation.
 	 */
-	public void setAddNode(int addNode) {
-		this.addNode = (addNode < 0) ? 0 : addNode;
+	public void setAddNode(float nbChanges) {
+		this.nbAddNode = (int) nbChanges;
+		this.chanceAdditionalAddNode = nbChanges % 1;
 	}
 	
 	/**
 	 * setter for the addLink mutation. <br>
 	 * Negative values are not allowed.
-	 * @param addLink the bigger the number, the less frequentely the mutation
-	 * will append.
+	 * @param nbChanges the number of mutation of that kind that will happend. <br>
+	 * the integer part will be the number of times this mutation will certainely happend <br>
+	 * the decimal part will be a probability of an additional mutation.
 	 * @param minMaxFactor In case of mutation, this is the maximum (and the minimum)
 	 * that the factor can be.
 	 */
-	public void setAddLink(int addLink, float minMaxFactor) {
-		this.addLink = (addLink < 0) ? 0 : addLink;
+	public void setAddLink(float nbChanges, float minMaxFactor) {
+		this.nbAddLink = (int) nbChanges;
+		this.chanceAdditionalAddLink = nbChanges % 1;
 		this.minMaxFactor = (minMaxFactor < 0) ? this.minMaxFactor : minMaxFactor;
 	}
 	
 	/**
 	 * setter for the deleteNode mutation. <br>
 	 * Negative values are not allowed.
-	 * @param deleteNode the bigger the number, the less frequentely the mutation
-	 * will append.
+	 * @param nbChanges the number of mutation of that kind that will happend. <br>
+	 * the integer part will be the number of times this mutation will certainely happend <br>
+	 * the decimal part will be a probability of an additional mutation.
 	 */
-	public void setDeleteNode(int deleteNode) {
-		this.deleteNode = (deleteNode < 0) ? 0 : deleteNode;
+	public void setDeleteNode(float nbChanges) {
+		this.nbDeleteNode = (int) nbChanges;
+		this.chanceAdditionalDeleteNode = nbChanges % 1;
 	}
 	
 	/**
 	 * setter for the deleteLink mutation. <br>
 	 * Negative values are not allowed.
-	 * @param deleteLink the bigger the number, the less frequentely the mutation
-	 * will append.
+	 * @param nbChanges the number of mutation of that kind that will happend. <br>
+	 * the integer part will be the number of times this mutation will certainely happend <br>
+	 * the decimal part will be a probability of an additional mutation.
 	 */
-	public void setDeleteLink(int deleteLink) {
-		this.deleteLink = (deleteLink < 0) ? 0 : deleteLink;
+	public void setDeleteLink(float nbChanges) {
+		this.nbDeleteLink = (int) nbChanges;
+		this.chanceAdditionalDeleteLink = nbChanges % 1;
 	}
 	
 	/***********************************************************************************/
@@ -203,28 +233,68 @@ public abstract class ReproductionAlgorithm {
 	public abstract Individual[] reproduce(Individual[] population);
 	
 	/**
+	 * private method executing the guarenteed mutations in a brain
+	 * @param brain the brain to modify
+	 */
+	private void guaranteedMutations(Brain brain) {
+		for (int i = 0; i < this.nbChangesLinkFactor; i++) {
+			brain.changeRandomLinkFactor(this.minMaxChange);
+		}
+		for (int i = 0; i < this.nbChangeLinkExtremity; i++) {
+			brain.changeRandomLinkExtremity();
+		}
+		for (int i = 0; i < this.nbAddNode; i++) {
+			brain.addRandomNode();
+		}
+		for (int i = 0; i < this.nbAddLink; i++) {
+			brain.addRandomLink(this.minMaxFactor);
+		}
+		for (int i = 0; i < this.nbDeleteNode; i++) {
+			brain.deleteRandomNode();
+		}
+		for (int i = 0; i < this.nbDeleteLink; i++) {
+			brain.deleteRandomLink();
+		}
+	}
+	
+	/**
+	 * Private method to execute the additional and rare mutations on a brain
+	 * @param brain the brain to modify
+	 */
+	private void randomMutations(Brain brain) {
+		//link factor
+		if (this.chanceAdditionalChangeLinkFactor != 0 
+				&& Math.random() < this.chanceAdditionalChangeLinkFactor) 
+			brain.changeRandomLinkFactor(minMaxChange);
+		//link extremity
+		if (this.chanceAdditionalChangeLinkExtremity != 0 
+				&& Math.random() < this.chanceAdditionalChangeLinkExtremity) 
+			brain.changeRandomLinkExtremity();
+		//add node
+		if (this.chanceAdditionalAddNode != 0 
+				&& Math.random() < this.chanceAdditionalAddNode) 
+			brain.addRandomNode();
+		//add link
+		if (this.chanceAdditionalAddLink != 0 
+				&& Math.random() < this.chanceAdditionalAddLink) 
+			brain.addRandomLink(minMaxFactor);
+		//delete node
+		if (this.chanceAdditionalDeleteNode != 0 
+				&& Math.random() < this.chanceAdditionalDeleteNode) 
+			brain.deleteRandomNode();
+		//delete link
+		if (this.chanceAdditionalDeleteLink != 0 
+				&& Math.random() < this.chanceAdditionalDeleteLink) 
+			brain.deleteRandomLink();
+	}
+	
+	/**
 	 * this function allows us to make the mutations according to our choices.
 	 * @param brain the brain to modify
 	 */
 	protected void mutate(Brain brain) {
-		//link factor
-		if (changeLinkFactor != 0 && random.nextInt(changeLinkFactor) == 0) 
-			brain.changeRandomLinkFactor(minMaxChange);
-		//link extremity
-		if (changeLinkExtremity != 0 && random.nextInt(changeLinkExtremity) == 0) 
-			brain.changeRandomLinkExtremity();
-		//add node
-		if (addNode != 0 && random.nextInt(addNode) == 0) 
-			brain.addRandomNode();
-		//add link
-		if (addLink != 0 && random.nextInt(addLink) == 0) 
-			brain.addRandomLink(minMaxFactor);
-		//delete node
-		if (deleteNode != 0 && random.nextInt(deleteNode) == 0) 
-			brain.deleteRandomNode();
-		//delete link
-		if (deleteLink != 0 && random.nextInt(deleteLink) == 0) 
-			brain.deleteRandomLink();
+		this.guaranteedMutations(brain);
+		this.randomMutations(brain);
 	}
 	
 	/**
