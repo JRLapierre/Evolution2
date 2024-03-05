@@ -84,14 +84,14 @@ public class Elitism extends ReproductionAlgorithm {
 		//mutated clones
 		for (int i = 0; i < this.nbMutatedClones; i++) {
 			newPopulation[nbPerfectClones + i] = new Individual(population[(i % this.limit) % population.length]);
-			mutate(newPopulation[nbPerfectClones + i].getBrain());			
+			this.mutationManager.mutate(newPopulation[nbPerfectClones + i].getBrain());			
 		}
 		//combined childrens
 		for (int i = 0; i < this.nbCombinedChildren; i++) {
 			newPopulation[nbPerfectClones + nbMutatedClones + i] = new Individual(
 							population[((2 * i) % this.limit) % population.length], 
 							population[((2 * i + 1) % this.limit) % population.length]);
-			mutate(newPopulation[nbPerfectClones + nbMutatedClones + i].getBrain());			
+			this.mutationManager.mutate(newPopulation[nbPerfectClones + nbMutatedClones + i].getBrain());			
 		}
 		
 		return newPopulation;
@@ -106,7 +106,7 @@ public class Elitism extends ReproductionAlgorithm {
 		bb.putInt(nbMutatedClones);
 		bb.putInt(nbCombinedChildren);
 		bb.putInt(limit);
-		bb.put(toByteMutations());
+		bb.put(this.mutationManager.toByte());
 		return bb.array();
 	}
 }

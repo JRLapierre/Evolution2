@@ -110,14 +110,14 @@ public class RouletteSelection extends ReproductionAlgorithm {
 		//mutated clones
 		for (int i = 0; i < this.nbMutatedClones; i++) {
 			newPopulation[nbPerfectClones + i] = new Individual(pickIndividual(population, sumScore));
-			mutate(newPopulation[nbPerfectClones + i].getBrain());
+			this.mutationManager.mutate(newPopulation[nbPerfectClones + i].getBrain());
 		}
 		//combined childrens
 		for (int i = 0; i < this.nbCombinedChildren; i++) {
 			newPopulation[nbPerfectClones + nbMutatedClones + i] = new Individual(
 					pickIndividual(population, sumScore), 
 					pickIndividual(population, sumScore));
-			mutate(newPopulation[nbPerfectClones + nbMutatedClones + i].getBrain());			
+			this.mutationManager.mutate(newPopulation[nbPerfectClones + nbMutatedClones + i].getBrain());			
 		}
 		
 		return newPopulation;
@@ -132,7 +132,7 @@ public class RouletteSelection extends ReproductionAlgorithm {
 		bb.putInt(nbMutatedClones);
 		bb.putInt(nbCombinedChildren);
 		bb.putInt(limit);
-		bb.put(toByteMutations());
+		bb.put(this.mutationManager.toByte());
 		return bb.array();
 	}
 

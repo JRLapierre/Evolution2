@@ -38,8 +38,8 @@ class TestJsonExportable {
 		}
 		//set up the reproduction algo (not important)
 		ReproductionAlgorithm reproductionAlgorithm = new Elitism(0, 5, 5, 10);
-		reproductionAlgorithm.setAddLink(2, 3);
-		reproductionAlgorithm.setDeleteLink(2);
+		reproductionAlgorithm.getMutationManager().setAddLink(2.1f, 3);
+		reproductionAlgorithm.getMutationManager().setDeleteLink(2);
 		//lambda expression
 		Evaluation evaluation = population -> {
 			//does nothing and it's fine for this test

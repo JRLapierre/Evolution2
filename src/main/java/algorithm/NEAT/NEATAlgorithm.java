@@ -166,7 +166,8 @@ public class NEATAlgorithm extends LearningAlgorithm {
 		settingsFile.mkdirs();
 		//informations about the reproductionAlgorithm
 		byte[] reproductionSettings = this.reproductionAlgorithm.toByte();
-		ByteBuffer bb = ByteBuffer.allocate(reproductionSettings.length + 9);
+		ByteBuffer bb = ByteBuffer.allocate(
+				reproductionSettings.length + 9);
 		bb.put((byte) 1); //1 for the NEATAlgorithm
 		bb.put(reproductionSettings);
 		bb.putInt(numGeneration);
