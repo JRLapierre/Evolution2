@@ -1,4 +1,4 @@
-package algorithm.NEAT;
+package algorithm.neat;
 
 import static org.junit.jupiter.api.Assertions.*;
 

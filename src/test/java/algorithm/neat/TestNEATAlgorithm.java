@@ -1,4 +1,4 @@
-package algorithm.NEAT;
+package algorithm.neat;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,9 +12,9 @@ import java.util.Comparator;
 import org.junit.jupiter.api.Test;
 
 import algorithm.LearningAlgorithm;
-import algorithm.NEAT.reproduction.Elitism;
-import algorithm.NEAT.reproduction.ReproductionAlgorithm;
-import algorithm.NEAT.reproduction.RouletteSelection;
+import algorithm.neat.reproduction.Elitism;
+import algorithm.neat.reproduction.ReproductionAlgorithm;
+import algorithm.neat.reproduction.RouletteSelection;
 import brain.Brain;
 import brain.LayeredBrain;
 import tools.Evaluation;

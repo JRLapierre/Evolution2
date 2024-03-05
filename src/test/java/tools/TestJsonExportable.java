@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 
-import algorithm.NEAT.Individual;
-import algorithm.NEAT.NEATAlgorithm;
-import algorithm.NEAT.reproduction.Elitism;
-import algorithm.NEAT.reproduction.ReproductionAlgorithm;
+import algorithm.neat.Individual;
+import algorithm.neat.NEATAlgorithm;
+import algorithm.neat.reproduction.Elitism;
+import algorithm.neat.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 import brain.FlexibleBrain;
 import brain.LayeredBrain;

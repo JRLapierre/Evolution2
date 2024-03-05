@@ -1,4 +1,4 @@
-package algorithm.NEAT.reproduction;
+package algorithm.neat.reproduction;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 
 import org.junit.jupiter.api.Test;
 
-import algorithm.NEAT.Individual;
+import algorithm.neat.Individual;
 import brain.LayeredBrain;
 
 class TestReproductionAlgorithm {

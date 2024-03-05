@@ -1,9 +1,9 @@
-package algorithm.NEAT.reproduction;
+package algorithm.neat.reproduction;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
 
-import algorithm.NEAT.Individual;
+import algorithm.neat.Individual;
 
 /**
  * This class allow us to have a choice of algorithm for the reproduction.

@@ -1,4 +1,4 @@
-package algorithm.NEAT;
+package algorithm.neat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import algorithm.LearningAlgorithm;
-import algorithm.NEAT.reproduction.ReproductionAlgorithm;
+import algorithm.neat.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 import tools.Evaluation;
 

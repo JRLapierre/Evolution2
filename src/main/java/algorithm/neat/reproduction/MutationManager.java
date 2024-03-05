@@ -1,4 +1,4 @@
-package algorithm.NEAT.reproduction;
+package algorithm.neat.reproduction;
 
 import java.nio.ByteBuffer;
 

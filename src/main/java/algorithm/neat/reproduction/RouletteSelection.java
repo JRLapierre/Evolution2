@@ -1,19 +1,20 @@
-package algorithm.NEAT.reproduction;
+package algorithm.neat.reproduction;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import algorithm.NEAT.Individual;
+import algorithm.neat.Individual;
 
 /**
- * This class represents a selection algorithm that makes x perfect clones of the x best,
- * y mutated clones of the y best and combine the 2*z best to make children.
+ * This class represents the roulette selection algorithm. <br>
+ * The selection will be partially random : the higher the score, the more likely the 
+ * individual will be selected.
  * @author jrl
  *
  */
-public class Elitism extends ReproductionAlgorithm {
-	
+public class RouletteSelection extends ReproductionAlgorithm {
+
 	/***********************************************************************************/
 	/* 									variables                                      */
 	/***********************************************************************************/
@@ -43,7 +44,7 @@ public class Elitism extends ReproductionAlgorithm {
 	/***********************************************************************************/
 	
 	/**
-	 * Constructor for an elitist selection.
+	 * Constructor for an roulette selection.
 	 * @param nbPerfectClones the number of perfect clones for the next generation
 	 * @param nbMutatedClones the number of mutated clones for the next generation
 	 * @param nbCombinedChildren the number of children of combinaison for the next
@@ -51,7 +52,7 @@ public class Elitism extends ReproductionAlgorithm {
 	 * @param limit the rank of the last individual that can be selected for the next 
 	 * generation.
 	 */
-	public Elitism(int nbPerfectClones, int nbMutatedClones, int nbCombinedChildren, int limit) {
+	public RouletteSelection(int nbPerfectClones, int nbMutatedClones, int nbCombinedChildren, int limit) {
 		this.nbPerfectClones = nbPerfectClones;
 		this.nbMutatedClones = nbMutatedClones;
 		this.nbCombinedChildren = nbCombinedChildren;
@@ -62,46 +63,71 @@ public class Elitism extends ReproductionAlgorithm {
 	 * Constructor to restore from a save.
 	 * @param bb The ByteBuffer containing the informations
 	 */
-	protected Elitism(ByteBuffer bb) {
+	protected RouletteSelection(ByteBuffer bb) {
 		this.nbPerfectClones = bb.getInt();
 		this.nbMutatedClones = bb.getInt();
 		this.nbCombinedChildren = bb.getInt();
 		this.limit = bb.getInt();
 	}
 	
+	
 	/***********************************************************************************/
 	/* 									 methods                                       */
 	/***********************************************************************************/
 	
+	/**
+	 * This method allows us to select an individual in the population.
+	 * @param population the population from witch we pick
+	 * @param sumScore the sum of the scores of the selected individuals
+	 * @return the selected individual
+	 */
+	private Individual pickIndividual(Individual[] population, float sumScore) {
+		float randomNumber = random.nextFloat(sumScore);
+		float localSum = 0;
+		for (Individual individual : population) {
+			localSum += individual.getScore();
+			if (localSum > randomNumber) return individual;
+		}
+		return population[0];//should never happend
+	}
+	
 	@Override
 	public Individual[] reproduce(Individual[] population) {
-        Arrays.sort(population, Comparator.comparingDouble(Individual::getScore).reversed());
+		Arrays.sort(population, Comparator.comparingDouble(Individual::getScore).reversed());
 		Individual[] newPopulation = new Individual[this.nbPerfectClones + this.nbMutatedClones + this.nbCombinedChildren];
+		//ajust the score to only have positive scores (the lowest score will become 1)
+		float changeScore = population[population.length-1].getScore() * (-1) + 1;
+		for (Individual individual : population) individual.updateScore(changeScore);
+		//calculate the sum of the scores of the allowed ones
+		float sumScore = 0;
+		for (int i = 0; i < population.length && i != this.limit; i++) {
+			sumScore += population[i].getScore();
+		}
 		//perfect clones
 		for (int i = 0; i < this.nbPerfectClones; i++) {
-			newPopulation[i] = new Individual(population[(i % this.limit) % population.length]);
+			newPopulation[i] = new Individual(pickIndividual(population, sumScore));
 		}
 		//mutated clones
 		for (int i = 0; i < this.nbMutatedClones; i++) {
-			newPopulation[nbPerfectClones + i] = new Individual(population[(i % this.limit) % population.length]);
-			this.mutationManager.mutate(newPopulation[nbPerfectClones + i].getBrain());			
+			newPopulation[nbPerfectClones + i] = new Individual(pickIndividual(population, sumScore));
+			this.mutationManager.mutate(newPopulation[nbPerfectClones + i].getBrain());
 		}
 		//combined childrens
 		for (int i = 0; i < this.nbCombinedChildren; i++) {
 			newPopulation[nbPerfectClones + nbMutatedClones + i] = new Individual(
-							population[((2 * i) % this.limit) % population.length], 
-							population[((2 * i + 1) % this.limit) % population.length]);
+					pickIndividual(population, sumScore), 
+					pickIndividual(population, sumScore));
 			this.mutationManager.mutate(newPopulation[nbPerfectClones + nbMutatedClones + i].getBrain());			
 		}
 		
 		return newPopulation;
 	}
-	
+
 	@Override
 	public byte[] toByte() {
 		//1 (type) + 16 (class parameters) + 32 (mutation parameters)
 		ByteBuffer bb = ByteBuffer.allocate(49);
-		bb.put((byte) 1); //1 for Elitism
+		bb.put((byte) 2); //2 for Roulette selection
 		bb.putInt(nbPerfectClones);
 		bb.putInt(nbMutatedClones);
 		bb.putInt(nbCombinedChildren);
@@ -109,4 +135,5 @@ public class Elitism extends ReproductionAlgorithm {
 		bb.put(this.mutationManager.toByte());
 		return bb.array();
 	}
+
 }

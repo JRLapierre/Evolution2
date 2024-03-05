@@ -1,10 +1,10 @@
 package simulation;
 
 import algorithm.LearningAlgorithm;
-import algorithm.NEAT.Individual;
-import algorithm.NEAT.NEATAlgorithm;
-import algorithm.NEAT.reproduction.Elitism;
-import algorithm.NEAT.reproduction.ReproductionAlgorithm;
+import algorithm.neat.Individual;
+import algorithm.neat.NEATAlgorithm;
+import algorithm.neat.reproduction.Elitism;
+import algorithm.neat.reproduction.ReproductionAlgorithm;
 import brain.Brain;
 import brain.LayeredBrain;
 import tools.View;
