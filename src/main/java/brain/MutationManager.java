@@ -1,8 +1,6 @@
-package algorithm.neat.reproduction;
+package brain;
 
 import java.nio.ByteBuffer;
-
-import brain.Brain;
 
 /**
  * This class allows us to manage easyly the mutations
@@ -249,7 +247,7 @@ public class MutationManager {
 	 * this function allows us to make the mutations according to our choices.
 	 * @param brain the brain to modify
 	 */
-	protected void mutate(Brain brain) {
+	public void mutate(Brain brain) {
 		this.guaranteedMutations(brain);
 		this.randomMutations(brain);
 	}

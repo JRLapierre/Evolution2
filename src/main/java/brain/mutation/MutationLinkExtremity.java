@@ -2,7 +2,7 @@ package brain.mutation;
 
 import java.nio.ByteBuffer;
 
-public class MutationLinkExtremity extends Mutation {
+public class MutationLinkExtremity implements Mutation {
 	private short[] linkCoordinates;
 	private boolean origin;
 	private short oldNodeArray;

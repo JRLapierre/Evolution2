@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 
 import algorithm.neat.Individual;
+import brain.MutationManager;
 
 /**
  * This class allow us to have a choice of algorithm for the reproduction.

@@ -1,14 +1,10 @@
-package algorithm.neat.reproduction;
+package brain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.ByteBuffer;
 
 import org.junit.jupiter.api.Test;
-
-import brain.Brain;
-import brain.FlexibleBrain;
-import brain.LayeredBrain;
 
 class TestMutationManager {
 	

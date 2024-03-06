@@ -2,7 +2,7 @@ package brain.mutation;
 
 import java.nio.ByteBuffer;
 
-public class MutationLinkFactor extends Mutation {
+public class MutationLinkFactor implements Mutation {
 	private short originArray;
 	private short originPosition;
 	private short targetArray;

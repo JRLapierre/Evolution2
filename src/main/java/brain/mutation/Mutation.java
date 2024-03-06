@@ -2,7 +2,7 @@ package brain.mutation;
 
 import java.nio.ByteBuffer;
 
-public abstract class Mutation {
+public interface Mutation {
 	
 	/**
 	 * static function to recreate mutations from binary data
