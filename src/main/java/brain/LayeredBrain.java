@@ -367,6 +367,7 @@ public class LayeredBrain extends Brain {
 
 	@Override
 	public void changeRandomLinkFactor(float minMaxChange) {
+		if (minMaxChange == 0) return;
 		short layer = (short) random.nextInt(this.links.length);
 		if (this.links[layer].length == 0) return;
 		short origin = (short) random.nextInt(this.links[layer].length);
