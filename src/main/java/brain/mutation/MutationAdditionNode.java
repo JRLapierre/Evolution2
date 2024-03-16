@@ -2,7 +2,7 @@ package brain.mutation;
 
 import java.nio.ByteBuffer;
 
-public class MutationAdditionNode extends Mutation {
+public class MutationAdditionNode implements Mutation {
 	private short layer;
 	
 	/**

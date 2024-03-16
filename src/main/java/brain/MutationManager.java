@@ -1,8 +1,8 @@
-package algorithm.neat.reproduction;
+package brain;
 
 import java.nio.ByteBuffer;
 
-import brain.Brain;
+import tools.RandomManager;
 
 /**
  * This class allows us to manage easyly the mutations
@@ -29,7 +29,7 @@ public class MutationManager {
 	 * In case of changeRandomLinkFactor mutation, this is the maximum (and the minimum)
 	 * that the change of factor can be.
 	 */
-	private float minMaxChange = Float.MIN_NORMAL;
+	private float minMaxChange = Float.MIN_VALUE;
 	
 	/**
 	 * The number of guarandeed changement of an extremity of a link
@@ -65,7 +65,7 @@ public class MutationManager {
 	 * In case of addRandomLink mutation, this is the maximum (and the minimum) that the 
 	 * factor can be.
 	 */
-	private float minMaxFactor = Float.MIN_NORMAL;
+	private float minMaxFactor = Float.MIN_VALUE;
 	
 	/**
 	 * The number of guarandeed deletion of nodes
@@ -103,7 +103,7 @@ public class MutationManager {
 	public void setChangeLinkFactor(float nbChanges, float minMaxChange) {
 		this.nbChangesLinkFactor = (int) nbChanges;
 		this.chanceAdditionalChangeLinkFactor = nbChanges % 1;
-		this.minMaxChange = (minMaxChange < 0) ? this.minMaxChange : minMaxChange;
+		this.minMaxChange = (minMaxChange < 0) ? Float.MIN_VALUE : minMaxChange;
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class MutationManager {
 	public void setAddLink(float nbChanges, float minMaxFactor) {
 		this.nbAddLink = (int) nbChanges;
 		this.chanceAdditionalAddLink = nbChanges % 1;
-		this.minMaxFactor = (minMaxFactor < 0) ? this.minMaxFactor : minMaxFactor;
+		this.minMaxFactor = (minMaxFactor < 0) ? Float.MIN_VALUE : minMaxFactor;
 	}
 	
 	/**
@@ -219,29 +219,30 @@ public class MutationManager {
 	 * @param brain the brain to modify
 	 */
 	private void randomMutations(Brain brain) {
+		RandomManager random = RandomManager.getInstance();
 		//link factor
 		if (this.chanceAdditionalChangeLinkFactor != 0 
-				&& Math.random() < this.chanceAdditionalChangeLinkFactor) 
+				&& random.nextFloat() < this.chanceAdditionalChangeLinkFactor) 
 			brain.changeRandomLinkFactor(minMaxChange);
 		//link extremity
 		if (this.chanceAdditionalChangeLinkExtremity != 0 
-				&& Math.random() < this.chanceAdditionalChangeLinkExtremity) 
+				&& random.nextFloat() < this.chanceAdditionalChangeLinkExtremity) 
 			brain.changeRandomLinkExtremity();
 		//add node
 		if (this.chanceAdditionalAddNode != 0 
-				&& Math.random() < this.chanceAdditionalAddNode) 
+				&& random.nextFloat() < this.chanceAdditionalAddNode) 
 			brain.addRandomNode();
 		//add link
 		if (this.chanceAdditionalAddLink != 0 
-				&& Math.random() < this.chanceAdditionalAddLink) 
+				&& random.nextFloat() < this.chanceAdditionalAddLink) 
 			brain.addRandomLink(minMaxFactor);
 		//delete node
 		if (this.chanceAdditionalDeleteNode != 0 
-				&& Math.random() < this.chanceAdditionalDeleteNode) 
+				&& random.nextFloat() < this.chanceAdditionalDeleteNode) 
 			brain.deleteRandomNode();
 		//delete link
 		if (this.chanceAdditionalDeleteLink != 0 
-				&& Math.random() < this.chanceAdditionalDeleteLink) 
+				&& random.nextFloat() < this.chanceAdditionalDeleteLink) 
 			brain.deleteRandomLink();
 	}
 	
@@ -249,7 +250,7 @@ public class MutationManager {
 	 * this function allows us to make the mutations according to our choices.
 	 * @param brain the brain to modify
 	 */
-	protected void mutate(Brain brain) {
+	public void mutate(Brain brain) {
 		this.guaranteedMutations(brain);
 		this.randomMutations(brain);
 	}

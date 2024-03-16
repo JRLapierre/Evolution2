@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import algorithm.neat.Individual;
+import tools.RandomManager;
 
 /**
  * This class represents the roulette selection algorithm. <br>
@@ -82,7 +83,7 @@ public class RouletteSelection extends ReproductionAlgorithm {
 	 * @return the selected individual
 	 */
 	private Individual pickIndividual(Individual[] population, float sumScore) {
-		float randomNumber = random.nextFloat(sumScore);
+		float randomNumber = RandomManager.getInstance().nextFloat(sumScore);
 		float localSum = 0;
 		for (Individual individual : population) {
 			localSum += individual.getScore();

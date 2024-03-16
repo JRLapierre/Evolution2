@@ -2,7 +2,7 @@ package brain.mutation;
 
 import java.nio.ByteBuffer;
 
-public class MutationDeletionLink extends Mutation {
+public class MutationDeletionLink implements Mutation {
 	private short originArray;
 	private short originPosition;
 	private short targetArray;

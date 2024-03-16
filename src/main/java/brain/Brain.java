@@ -2,9 +2,9 @@ package brain;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
-import java.util.Random;
 
 import brain.mutation.Mutation;
+import tools.RandomManager;
 
 /**
  * This abstract class will allow to have common methods for all of the brains.
@@ -27,7 +27,7 @@ public abstract class Brain {
 	/**
 	 * the source of random numbers for the mutations.
 	 */
-	protected static Random random = new Random();
+	protected static RandomManager random = RandomManager.getInstance();
 	
 	/**
 	 * boolean to decide if we track the mutations or not.
