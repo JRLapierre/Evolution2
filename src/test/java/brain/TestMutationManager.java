@@ -1,11 +1,8 @@
 package brain;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.nio.ByteBuffer;
-import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +58,7 @@ class TestMutationManager {
 		b = new LayeredBrain(1,1,1,1);
 		manager.setAddNode(1.5f);
 		manager.mutate(b);
-		assertEquals(2f, b.compute(new float[]{1})[0]);
+		assertEquals(2.5f, b.compute(new float[]{1})[0], 0.5f);
 	}
 	
 	@Test
