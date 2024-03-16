@@ -1,10 +1,10 @@
 package algorithm.neat.reproduction;
 
 import java.nio.ByteBuffer;
-import java.util.Random;
 
 import algorithm.neat.Individual;
 import brain.MutationManager;
+import tools.RandomManager;
 
 /**
  * This class allow us to have a choice of algorithm for the reproduction.
@@ -16,11 +16,6 @@ public abstract class ReproductionAlgorithm {
 	/***********************************************************************************/
 	/* 									variables                                      */
 	/***********************************************************************************/
-	
-	/**
-	 * generator of random numbers
-	 */
-	protected static Random random = new Random();
 	
 	/**
 	 * The mutationManager to manage the mutations happening during the reproduction 

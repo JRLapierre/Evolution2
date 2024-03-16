@@ -2,6 +2,8 @@ package brain;
 
 import java.nio.ByteBuffer;
 
+import tools.RandomManager;
+
 /**
  * This class allows us to manage easyly the mutations
  * @author jrl
@@ -217,29 +219,30 @@ public class MutationManager {
 	 * @param brain the brain to modify
 	 */
 	private void randomMutations(Brain brain) {
+		RandomManager random = RandomManager.getInstance();
 		//link factor
 		if (this.chanceAdditionalChangeLinkFactor != 0 
-				&& Math.random() < this.chanceAdditionalChangeLinkFactor) 
+				&& random.nextFloat() < this.chanceAdditionalChangeLinkFactor) 
 			brain.changeRandomLinkFactor(minMaxChange);
 		//link extremity
 		if (this.chanceAdditionalChangeLinkExtremity != 0 
-				&& Math.random() < this.chanceAdditionalChangeLinkExtremity) 
+				&& random.nextFloat() < this.chanceAdditionalChangeLinkExtremity) 
 			brain.changeRandomLinkExtremity();
 		//add node
 		if (this.chanceAdditionalAddNode != 0 
-				&& Math.random() < this.chanceAdditionalAddNode) 
+				&& random.nextFloat() < this.chanceAdditionalAddNode) 
 			brain.addRandomNode();
 		//add link
 		if (this.chanceAdditionalAddLink != 0 
-				&& Math.random() < this.chanceAdditionalAddLink) 
+				&& random.nextFloat() < this.chanceAdditionalAddLink) 
 			brain.addRandomLink(minMaxFactor);
 		//delete node
 		if (this.chanceAdditionalDeleteNode != 0 
-				&& Math.random() < this.chanceAdditionalDeleteNode) 
+				&& random.nextFloat() < this.chanceAdditionalDeleteNode) 
 			brain.deleteRandomNode();
 		//delete link
 		if (this.chanceAdditionalDeleteLink != 0 
-				&& Math.random() < this.chanceAdditionalDeleteLink) 
+				&& random.nextFloat() < this.chanceAdditionalDeleteLink) 
 			brain.deleteRandomLink();
 	}
 	

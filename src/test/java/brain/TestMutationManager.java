@@ -1,27 +1,15 @@
 package brain;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.nio.ByteBuffer;
+import java.util.Random;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
 class TestMutationManager {
-	
-	@BeforeEach
-	void setUp() {
-	    try (MockedStatic<Math> utilities = Mockito.mockStatic(Math.class)) {
-	        utilities.when(Math::random).thenReturn(0.5);
-	        assertEquals(0.5, Math.random());
-	    }
-        assertEquals(0.5, Math.random());
-	}
 	
 	@Test
 	void testNoChanges() {
@@ -40,13 +28,21 @@ class TestMutationManager {
 	
 	@Test
 	void testChangeLinkFactor() {
+		//init
 		MutationManager manager = new MutationManager();
 		LayeredBrain.setDefaultLinkValue(1);
 		LayeredBrain.setDefaultLinkVariation(0);
+		//case 1 : no additional mutation
 		Brain b = new LayeredBrain(1,1,0,0);
-		manager.setChangeLinkFactor(1, 1); //TODO more tests
+		manager.setChangeLinkFactor(1.2f, 1);
 		manager.mutate(b);
 		assertEquals(1f, b.compute(new float[]{1})[0], 1f);
+		//case 2 : additional mutation
+		b = new LayeredBrain(1,1,0,0);
+		manager.setChangeLinkFactor(1.6f, 1);
+		manager.mutate(b);
+		assertEquals(2f, b.compute(new float[]{1})[0], 2f);
+		//case 3 : no changes
 		b = new LayeredBrain(1,1,0,0);
 		manager.setChangeLinkFactor(50, 0);
 		manager.mutate(b);

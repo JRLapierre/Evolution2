@@ -658,8 +658,7 @@ public class FlexibleBrain extends Brain {
 	@Override
 	public void deleteRandomNode() {
 		if (this.hidden.length == 0) return;
-		int position = random.nextInt(
-				this.hidden.length);
+		int position = random.nextInt(this.hidden.length);
 		this.deleteNode(position);
 	}
 
