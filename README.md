@@ -1,6 +1,6 @@
 <h1> Evolution2 </h1>
 
-Version 1.11
+Version 1.11.1
 
 this is my second neural network project. In this project, I want to make a structure that is more optimized and open to new features than the last. <br>
 
@@ -10,7 +10,11 @@ I just do that for fun, so feel free to use this however you like.
 
 <h2> version history </h2>
 
-<h5> 1.11 </h5>
+<h4> 1.11.1 </h4>
+
+Minor refactor leading to the creation of the class RandomManager
+
+<h4> 1.11 </h4>
 
 Refactor of the project :   
 - extraction of a MutationManagement class from the ReproductionAlgorithm class
